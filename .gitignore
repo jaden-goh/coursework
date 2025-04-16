@@ -1,0 +1,27 @@
+# Jupyter notebook autosaves
+.ipynb_checkpoints/
+
+# Python bytecode
+__pycache__/
+*.py[cod]
+*.so
+
+# Virtual environments
+env/
+venv/
+.venv/
+
+# VSCode settings (optional, personal preference)
+.vscode/
+
+# System-specific files
+.DS_Store
+Thumbs.db
+
+# Jupytext backups (if you use Jupytext)
+*.ipynb.bak
+
+# Compiled C++ binaries (if using C++)
+*.exe
+*.out
+*.o
