@@ -1,10 +1,13 @@
 # for all coursework related learning
 
-CAA 16/4/25
+In Progress:
 
 - Data Structures & Algorithms
 - Object Oriented Programming
+- Game Theory
+  
 - Operating Systems
+- Databases
 - Algorithm Analysis
 - Software Engineering
 
