@@ -1,9 +1,8 @@
 # for all coursework related learning
 
 CAA 16/4/25
-- Data Structures & Algorithms
-    - 
 
+- Data Structures & Algorithms
 - Object Oriented Programming
 - Operating Systems
 - Algorithm Analysis
