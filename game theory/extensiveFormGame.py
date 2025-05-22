@@ -8,7 +8,7 @@ class Node:
     
     @property
     def isTerminal(self):
-        return len(self.children) == 0
+        return self.outcome != None
 
     def __repr__(self):
         return f"Node(Player: {self.players}, Action: {self.action}, Outcome: {self.outcome})"
