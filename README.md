@@ -1,17 +1,17 @@
 # for all coursework related coding
 
 In Progress:
-- Numerical Methods
-- Game Theory
-- Machine Learning
-  
+
 - Data Structures & Algorithms
 - Object Oriented Programming
 - Operating Systems
 - Databases
 - Algorithm Analysis
 - Software Engineering
-
+- Numerical Methods
+- Machine Learning
+- Game Theory
+  
 
 # notes (for a noob coder):
 
