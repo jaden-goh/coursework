@@ -1,11 +1,12 @@
-# for all coursework related learning
+# for all coursework related coding
 
 In Progress:
-
+- Numerical Methods
+- Game Theory
+- Machine Learning
+  
 - Data Structures & Algorithms
 - Object Oriented Programming
-- Game Theory
-  
 - Operating Systems
 - Databases
 - Algorithm Analysis
