@@ -14,6 +14,11 @@ public class Fruit extends Item {
         return type;
     }
 
+    @Override
+    public void displayInfo() {
+        System.out.println("Item: " + getName() + ", Quantity: " + getQuantity() +  ", Type: " + type);
+    
+    }
    public static void main(String[] var0) {
       System.out.println("Done");
    }

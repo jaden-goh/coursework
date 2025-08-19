@@ -1,5 +1,5 @@
-
-public class Item {
+// Abstraction: the abstract method makes it such that people cannot create generic nonsense items and only items that fit one of the child classes
+public abstract class Item {
     
     // Encapsulation: name and quantity are not accessible outside by any method other than the ones we defined.
 
@@ -17,6 +17,9 @@ public class Item {
         
         return this.quantity;
     }
+
+    public abstract void displayInfo();
+
     public static void main(String[] args) {
         System.out.println("Done");
 }

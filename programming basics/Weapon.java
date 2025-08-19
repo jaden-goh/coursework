@@ -17,6 +17,12 @@ public class Weapon extends Item{
         return damage;
     }
     
+    @Override
+    public void displayInfo() {
+        System.out.println("Item: " + getName() + ", Quantity: " + getQuantity() +  ", Type: " + type +  ", Damage: " + damage);
+    
+    }
+
     public static void main(String[] var0) {
       System.out.println("Done");
    }
