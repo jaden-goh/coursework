@@ -4,7 +4,7 @@ class ListNode:
         self.next = None
     
     def __repr__(self):
-        print(f"Node: {self}, Value: {self.val}")
+        return f"Node: {self}, Value: {self.val}"
 
 colour1 = ListNode("Blue")
 colour2 = ListNode("Red")  
