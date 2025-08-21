@@ -6,6 +6,8 @@ class ListNode:
     
     def __repr__(self):
         return f"Node: {self}, Value: {self.val}"
+    
+#Write a function split()that copies the contents of a linked list into two other linked lists
 
 def split(head):
     curr = head
