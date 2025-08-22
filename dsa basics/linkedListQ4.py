@@ -46,4 +46,4 @@ def list_to_pylist(head):
     return result
 
 head = build_linked_list([1, 2, 3, 4, 5])
-print(list_to_pylist(duplicateReverse(head)))  # Expected: []
+print(list_to_pylist(duplicateReverse(head))) 
