@@ -4,7 +4,7 @@ class ListNode:
         self.next = None
     
     def __repr__(self):
-        return f"Node: {self}, Value: {self.val}"
+        return f"Value: {self.val}"
     
 def displayNodes(head):
     curr = head
@@ -29,19 +29,45 @@ def searchNode(head, index):
 def addNode(head,node,index):
     curr = head
     if not head:
-        return None
+        head = node
+        return head
     elif not node:
-        return None
+        return head
+    elif index == 0:
+        node.next = head
+        head = node
+        return head
     else:
         for i in range(index-1):
             if not curr:
-                print(None)
-                break
+                return head
             else:
                 curr = curr.next
         tail = curr.next
         curr.next = node
         node.next = tail
+        return head
+
+def deleteNode(head, index):
+    curr = head
+    if not head:
+        return None
+    elif index == 0:
+        curr = curr.next
+        head.next = None
+        head = curr
+    else:
+        for i in range(index-1):
+            if not curr:
+                print("Index out of range")
+                break
+            else:
+                curr = curr.next
+        if not curr.next:
+            print("Index out of range")
+        else:
+            curr.next = curr.next.next
+    return head
     
 
 colour1 = ListNode("Blue")
@@ -59,15 +85,14 @@ num3.next = num4
 
 num2.next = num2.next.next # num2.next (3) becomes num2.next.next (4), 3 has no pointers, removed by garbage collector
 
-cur = num1
-while cur.next:
-    print(cur.val)
-    cur = cur.next
-print(cur.val) # Prints 1 2 4 (3 deleted)
- 
+print("----------------------")
 displayNodes(num1)
-
+print("----------------------")
 searchNode(num1, 1)
-
-addNode(num1, colour1, 2)
-displayNodes(num1)
+print("----------------------")
+colour1 = addNode(num1, colour1, 0)
+displayNodes(colour1)
+print("----------------------")
+deleteNode(colour1, 3)
+displayNodes(colour1)
+print("----------------------")
