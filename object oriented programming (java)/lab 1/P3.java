@@ -25,7 +25,7 @@ public class P3 {
         else {
             System.out.println("US$      S$");
             System.out.println("--------------");
-            for (int i = starting; i < ending + 1; i += increment) {
+            for (int i = starting; i <= ending; i += increment) {
                 System.out.println(i+"      "+(1.82*i)); 
             }
         
