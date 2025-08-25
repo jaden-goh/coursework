@@ -12,10 +12,10 @@ public class P4 {
             String output = "";
             while (j < i) {
                 if (j % 2 == 0) {
-                    output = output + "AA";
+                    output = "AA" + output;
                 }
                 else {
-                    output = output + "BB";
+                    output = "BB" + output;
                 }
                 j += 1;
             }
