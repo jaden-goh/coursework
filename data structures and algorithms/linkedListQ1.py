@@ -89,7 +89,7 @@ def build_linked_list(input_str):
     return head
 
 
-# Helper: Print linked list
+# Prints linked list
 def print_list(head):
     output = []
     while head:
