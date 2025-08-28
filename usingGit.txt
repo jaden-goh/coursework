@@ -1,0 +1,13 @@
+git clone ( this is how you will get the code on your local )
+
+git checkout ( this is how you will switch to the branch you want to branch off of ie. master/prod/dev )
+
+git pull ( this is how you will pull all updates from the origin/git )
+
+git checkout -b 'branch name' ( this is the branch you will create to write your fix/feature )
+
+git add . ( this will add the code changes to staging )
+
+git commit -m "summary of commit ( this will commit those changes )
+
+git push -u origin 'fix/feature branch you want to push' ( this will push up your branch to git )
