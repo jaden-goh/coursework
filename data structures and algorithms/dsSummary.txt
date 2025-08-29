@@ -1,0 +1,180 @@
+📘 Data Structures Summary
+1. Arrays
+
+Properties:
+Fixed-size (in low-level languages like C) or dynamic (Python list). Indexed, contiguous memory.
+
+Functions:
+
+Access: A[i] → O(1)
+
+Search (linear): O(n)
+
+Insert/Delete (end): O(1) amortized (if dynamic)
+
+Insert/Delete (arbitrary): O(n) (shift elements)
+
+Space: O(n)
+
+2. Linked Lists
+
+Properties:
+Nodes with values + pointers. Variants: Singly, Doubly, Circular.
+
+Functions:
+
+Access by index: O(n)
+
+Search: O(n)
+
+Insert/Delete at head: O(1)
+
+Insert/Delete at tail: O(1) (if tail pointer known; otherwise O(n))
+
+Space: O(n) (extra pointers)
+
+3. Stacks
+
+Properties:
+LIFO (Last-In, First-Out). Can be array-based or linked list–based.
+
+Functions:
+
+Push: O(1)
+
+Pop: O(1)
+
+Peek: O(1)
+
+Search: O(n)
+
+Space: O(n)
+
+4. Queues
+
+Properties:
+FIFO (First-In, First-Out). Can be array, linked list, or circular buffer.
+
+Functions:
+
+Enqueue: O(1)
+
+Dequeue: O(1)
+
+Peek: O(1)
+
+Variants: Deque (double-ended), Priority Queue (uses heap).
+
+Space: O(n)
+
+5. Hash Tables
+
+Properties:
+Key-value pairs, hashing function for indexing. Collisions resolved via chaining or open addressing.
+
+Functions:
+
+Insert: O(1) average, O(n) worst
+
+Search: O(1) average, O(n) worst
+
+Delete: O(1) average, O(n) worst
+
+Space: O(n)
+
+6. Heaps (Binary Heap)
+
+Properties:
+Complete binary tree; Min-heap (parent ≤ children), Max-heap (parent ≥ children).
+
+Functions:
+
+Insert: O(log n)
+
+Extract min/max: O(log n)
+
+Peek min/max: O(1)
+
+Applications: Priority queues, heap sort.
+
+Space: O(n)
+
+7. Binary Search Trees (BSTs)
+
+Properties:
+Ordered binary tree; left < root < right.
+
+Functions:
+
+Search: O(log n) average, O(n) worst
+
+Insert/Delete: O(log n) average, O(n) worst
+
+Balanced BSTs (AVL, Red-Black, B-Trees) keep O(log n) guarantees.
+
+Space: O(n)
+
+8. Graphs
+
+Properties:
+Vertices (nodes) + edges. Directed/undirected, weighted/unweighted, dense/sparse.
+
+Representations:
+
+Adjacency list: O(V+E) space
+
+Adjacency matrix: O(V²) space
+
+Functions:
+
+BFS/DFS: O(V+E)
+
+Dijkstra: O((V+E) log V) with heap
+
+Insert edge: O(1) (list), O(1) (matrix)
+
+Delete edge: O(1) (matrix), O(E) (list)
+
+9. Tries (Prefix Trees)
+
+Properties:
+Tree for storing strings by prefixes. Each edge = character.
+
+Functions:
+
+Insert word: O(m) (m = word length)
+
+Search word: O(m)
+
+Space: O(ALPHABET_SIZE × m) → can be large
+
+Applications: autocomplete, spellcheck.
+
+10. Sets
+
+Properties:
+Unordered collection of unique elements (often implemented with hash tables or BSTs).
+
+Functions:
+
+Insert: O(1) avg
+
+Delete: O(1) avg
+
+Search: O(1) avg
+
+Space: O(n)
+
+Rule of thumb:
+
+Use arrays when you need indexed access.
+
+Use linked lists when you need frequent insert/delete.
+
+Use stacks/queues for order-specific processing.
+
+Use hash tables for fast lookup.
+
+Use trees/tries for ordered or prefix queries.
+
+Use graphs for relationships/networks.

@@ -1,8 +1,19 @@
-#* 
-# Stacks: Implement with L-L in this course
-# Operations: Push (to top of stack), Pop (remove top of stack), Peek/Top (check value/look at top of stack), is_empty, get size #
-# LIFO Structure, the idea with using linked list is that head (the first node in the list) is the top of the stack
-# 
+"""Stacks
+
+Properties:
+LIFO (Last-In, First-Out). Can be array-based or linked list–based.
+
+Functions:
+
+Push: O(1)
+
+Pop: O(1)
+
+Peek: O(1)
+
+Search: O(n)
+
+Space: O(n)"""
 
 class ListNode:
     def __init__(self, val):
