@@ -1,6 +1,6 @@
 import java.util.Scanner;
 
-public class P1 {
+public class P11 {
     public static void main(String[] args) {
         System.out.print("Enter a Character:");
         Scanner scanner = new Scanner(System.in); // scanner is your variable where it takes in an input such as in Python: name = input("Enter your name: ") 
