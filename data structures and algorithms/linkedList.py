@@ -1,3 +1,24 @@
+"""
+2. Linked Lists
+
+Properties:
+Nodes with values + pointers. Variants: Singly, Doubly, Circular.
+
+Functions:
+
+Access by index: O(n)
+
+Search: O(n)
+
+Insert/Delete at head: O(1)
+
+Insert/Delete at tail: O(1) (if tail pointer known; otherwise O(n))
+
+Space: O(n) (extra pointers)
+"""
+
+
+
 class ListNode:
     def __init__(self, val):
         self.val = val
@@ -5,19 +26,24 @@ class ListNode:
     
     def __repr__(self):
         return f"Value: {self.val}"
+
+class LinkedList:
+    def __init__(self):
+        self.head = None
+        self.size = 0
     
-def displayNodes(head):
-    curr = head
+def displayNodes(list):
+    curr = list.head
     while curr:
         print(curr.val)
         curr = curr.next
     print(None)
 
-def searchNode(head, index):
-    if not head:
+def searchNode(list, index):
+    if not list.head:
         print(None)
     else:
-        curr = head
+        curr = list.head
         for i in range(index):
             if not curr:
                 print(None)
@@ -26,36 +52,36 @@ def searchNode(head, index):
                 curr = curr.next
         print(curr.val)
 
-def addNode(head,node,index):
-    curr = head
-    if not head:
-        head = node
-        return head
+def addNode(list,node,index):
+    curr = list.head
+    if not list.head:
+        list.head = node
+        return list
     elif not node:
-        return head
+        return list
     elif index == 0:
-        node.next = head
-        head = node
-        return head
+        node.next = list.head
+        list.head = node
+        return list
     else:
         for i in range(index-1):
             if not curr:
-                return head
+                return list
             else:
                 curr = curr.next
         tail = curr.next
         curr.next = node
         node.next = tail
-        return head
+        return list
 
-def deleteNode(head, index):
-    curr = head
-    if not head:
+def deleteNode(list, index):
+    curr = list.head
+    if not list.head:
         return None
     elif index == 0:
         curr = curr.next
-        head.next = None
-        head = curr
+        list.head.next = None
+        list.head = curr
     else:
         for i in range(index-1):
             if not curr:
@@ -67,32 +93,7 @@ def deleteNode(head, index):
             print("Index out of range")
         else:
             curr.next = curr.next.next
-    return head
+    return list
     
 
-colour1 = ListNode("Blue")
-colour2 = ListNode("Red")  
-colour3 = ListNode("Green")
 
-num1 = ListNode(1)
-num2= ListNode(2)
-num3= ListNode(3)
-num4= ListNode(4)
-
-num1.next = num2
-num2.next = num3
-num3.next = num4
-
-num2.next = num2.next.next # num2.next (3) becomes num2.next.next (4), 3 has no pointers, removed by garbage collector
-
-print("----------------------")
-displayNodes(num1)
-print("----------------------")
-searchNode(num1, 1)
-print("----------------------")
-colour1 = addNode(num1, colour1, 0)
-displayNodes(colour1)
-print("----------------------")
-deleteNode(colour1, 3)
-displayNodes(colour1)
-print("----------------------")
