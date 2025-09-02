@@ -71,12 +71,8 @@ class Queue:
         return self.size
 
 def removeUntil(stack, value):
-    curr = stack.top
-    while curr.next.val != value:
-        temp = curr
-        curr = curr.next
-        stack.pop(temp)
-    stack.pop(curr)
+    while stack.top.val != value:
+        stack.pop()
     return stack
 
 def recursiveReverse(queue):
@@ -86,7 +82,104 @@ def recursiveReverse(queue):
         temp.push(queue.peek())
     newqueue = Queue()
     
-    while not temp.is_empty:
+    while not temp.is_empty():
         newqueue.enqueue(temp.pop())
     
     return newqueue
+
+def palindrome(word):
+    front = ""
+    back = ""
+    stack = Stack()
+    for char in word:
+        front += char
+        stack.push(char)
+    while not stack.is_empty():
+        back += stack.pop()
+    
+    return front == back
+
+def balanced(expression):
+    map = {"(":")", "[":"]", "{":"}"}
+    stack = Stack()
+    for char in expression:
+        if char in ["(","[","{"]:
+            stack.push(char)
+        elif char in [")","]","}"]:
+            if stack.top:
+                if map[stack.top.val] == char:
+                    stack.pop()
+                else:
+                    return False
+            else:
+                return False
+        else:
+            return False
+    if stack.is_empty():
+        return True
+    else:
+        return False
+             
+
+# -----------------------------
+# TESTING removeUntil
+# -----------------------------
+print("\n--- Test removeUntil ---")
+s = Stack()
+for x in [1, 2, 3, 4, 5]:
+    s.push(x)
+# Stack is [5,4,3,2,1] with 5 on top
+print("Original Stack Top:", s.peek())
+s = removeUntil(s, 3)
+print("Stack after removeUntil(3):")
+while not s.is_empty():
+    print(s.pop(), end=" ")
+print()
+
+# -----------------------------
+# TESTING recursiveReverse
+# -----------------------------
+print("\n--- Test recursiveReverse ---")
+q = Queue()
+for x in [1, 2, 3, 4]:
+    q.enqueue(x)
+# Queue is [1,2,3,4] with 1 at front
+print("Original Queue Front:", q.peek())
+new_q = recursiveReverse(q)
+print("Queue after recursiveReverse:")
+while not new_q.is_empty():
+    print(new_q.dequeue(), end=" ")
+print()
+
+# -----------------------------
+# TESTING palindrome
+# -----------------------------
+print("\n--- Test palindrome ---")
+words = ["racecar", "level", "hello", "madam", "stack"]
+for w in words:
+    print(f"{w}: {palindrome(w)}")
+
+
+# --------------------------------
+# TESTING balanced expression
+# --------------------------------
+
+tests = [
+    ("()", True),
+    ("[]", True),
+    ("{}", True),
+    ("({[]})", True),
+    ("((()))", True),
+    ("([{}])", True),
+    ("(", False),
+    (")", False),
+    ("([)]", False),
+    ("(([]))", True),
+    ("{[()()]}", True),
+    ("{[(])}", False),
+    ("", True),   # empty string is balanced
+]
+
+for expr, expected in tests:
+    result = balanced(expr)
+    print(f"{expr}: {result} (expected {expected})")
