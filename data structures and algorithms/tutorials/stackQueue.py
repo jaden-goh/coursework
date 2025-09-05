@@ -92,5 +92,18 @@ def reverseFirstKItems(queue: Queue, k: int):
     return newQueue
 
 def sortStack(stack):
-    for i in range:
-        pass
+        tempStack = Stack()
+        while not stack.is_empty():
+            temp = stack.pop()
+            
+            while not tempStack.is_empty() and tempStack.top > temp:
+                stack.push(tempStack.pop())
+            
+            tempStack.push(temp)
+        
+        return tempStack
+
+"""
+Q4: Try Again
+
+"""
