@@ -92,4 +92,5 @@ def reverseFirstKItems(queue: Queue, k: int):
     return newQueue
 
 def sortStack(stack):
-    for i in range
+    for i in range:
+        pass
