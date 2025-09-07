@@ -57,25 +57,43 @@ public class Lab2p1 {
         String fin = String.format("%d answers out of 5 are correct. \n", correct);
         System.out.print(fin);
     }    
-    /* 
-    public static int divide(int m, int n) {
-
-    }    
     
-    public static int modulus(int m, int n) {
-
+    public static int divide(int m, int n) {
+        int ans = m / n;
+        String answer = String.format("%d %% %d = %d", m, n, ans);
+        System.out.print(answer); 
+        return ans;  
     }    
 
+    public static int modulus(int m, int n) {
+        int ans = m % n;
+        String answer = String.format("%d %% %d = %d", m, n, ans);
+        System.out.print(answer); 
+        return ans;  
+    }    
     
     public static int countDigits(int n) {
+        
+        if (n > 0) {
+            String nString = String.valueOf(n);
+            int L = nString.length();
+            String answer = String.format("n: %d - count = %d", n, L);
+            System.out.print(answer);
+            return n; 
+        }
+        else {
+            String answer = String.format("n: %d - Error input!!", n);
+            System.out.print(answer); 
+            return n; 
+        }
 
     }    
     
     public static int position(int n, int digit) {
-
+        
     }    
 
     public static long extractOddDigits(int n, int digit) {
 
-    }*/   
+    }
 }
