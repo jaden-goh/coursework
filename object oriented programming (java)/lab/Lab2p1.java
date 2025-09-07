@@ -90,10 +90,57 @@ public class Lab2p1 {
     }    
     
     public static int position(int n, int digit) {
-        
+        if (n > 0) {
+            int pos = 1;
+            while (n > 1) {
+                if (n % 10 == digit) {
+                    return pos;
+                }
+                else {
+                    n = n / 10;
+                    pos++;
+                }
+            }
+            return -1;
+        }
+        else {
+            String answer = String.format("n: %d - Error input!!", n);
+            System.out.print(answer); 
+            return n; 
+        }
     }    
 
     public static long extractOddDigits(int n, int digit) {
+        if (n > 0) {
 
+            Double ans = 0;
+            Double pos = 0;
+            while (n > 1) {
+                if ((n % 10) % 2 == 1) {
+                    ans = ans + ((n%10) * (Math.pow(10, pos)));
+                }
+                n = n / 10;
+                pos++;
+            }
+
+            long ansL = Math.round(ans);
+            
+            if (ans > 0) {
+                String answer = String.format("oddDigits = %d", ansL);
+                System.out.print(answer);
+                return ansL;
+            }
+            else {
+                String answer = String.format("oddDigits = -1");
+                System.out.print(answer);
+                return ansL;
+            }
+        }
+        
+        else {
+            String answer = String.format("n: %d - Error input!!", n);
+            System.out.print(answer); 
+            return n; 
+        }
     }
 }
