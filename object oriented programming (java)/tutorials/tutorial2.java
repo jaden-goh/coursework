@@ -43,7 +43,7 @@ class Dice {
         }
         
         public void setDiceValue(int val) {
-            this.valueOfDice = val;
+            this.valueOfDice = (int)(Math.random()*6) + 1;
         }
 
         public int getDiceValue(int val) {
