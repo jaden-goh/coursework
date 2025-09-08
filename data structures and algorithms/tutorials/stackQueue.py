@@ -104,6 +104,6 @@ def sortStack(stack):
         return tempStack
 
 """
-Q4: Try Again
+Q4: Try Again Using Stack
 
 """
