@@ -17,20 +17,48 @@ public class Lab2p1 {
         switch (choice) {
         case 1: mulTest();
         break;
-        case 2: /* add divide() call */
-        break;
-        case 3: /* add modulus() call */
-        break;
-        case 4: /* add countDigits() call */
-        break;
-        case 5: /* add position() call */
-        break;
-        case 6: /* add extractOddDigits() call */
-        break;
+        case 2: 
+            System.out.print("Enter m: ");
+            int m = sc.nextInt();
+            System.out.print("Enter n: ");
+            int n = sc.nextInt();
+            divide(m, n);
+            break;
+
+        case 3: 
+            System.out.print("Enter m: ");
+            m = sc.nextInt();
+            System.out.print("Enter n: ");
+            n = sc.nextInt();
+            modulus(m, n);
+            break;
+
+        case 4: 
+            System.out.print("Enter n: ");
+            int num = sc.nextInt();
+            countDigits(num);
+            break;
+
+        case 5: 
+            System.out.print("Enter n: ");
+            num = sc.nextInt();
+            System.out.print("Enter digit: ");
+            int digit = sc.nextInt();
+            int pos = position(num, digit);
+            System.out.println("position = " + pos);
+            break;
+
+        case 6: 
+            System.out.print("Enter n: ");
+            long longNum = sc.nextLong();
+            extractOddDigits(longNum);
+            break;
+            
         case 7: System.out.println("Program terminating.......");
+            break;
         }
-        } while (choice < 7);
-    }
+            } while (choice < 7);
+        }
         
     public static void mulTest() {
 
@@ -59,17 +87,25 @@ public class Lab2p1 {
     }    
     
     public static int divide(int m, int n) {
-        int ans = m / n;
-        String answer = String.format("%d %% %d = %d", m, n, ans);
+        int start = m;
+        int ans = 0;
+        while (m >= n) {
+            m = m - n;
+            ans++;  
+        }
+        String answer = String.format("%d %% %d = %d", start, n, ans);
         System.out.print(answer); 
         return ans;  
     }    
 
     public static int modulus(int m, int n) {
-        int ans = m % n;
-        String answer = String.format("%d %% %d = %d", m, n, ans);
+        int r = m;
+        while (r>=n) {
+            r -= n;
+        }
+        String answer = String.format("%d %% %d = %d ", m, n, r);
         System.out.print(answer); 
-        return ans;  
+        return r;  
     }    
     
     public static int countDigits(int n) {
@@ -77,14 +113,14 @@ public class Lab2p1 {
         if (n > 0) {
             String nString = String.valueOf(n);
             int L = nString.length();
-            String answer = String.format("n: %d - count = %d", n, L);
+            String answer = String.format("n: %d - count = %d \n", n, L);
             System.out.print(answer);
-            return n; 
+            return L; 
         }
         else {
-            String answer = String.format("n: %d - Error input!!", n);
+            String answer = String.format("n: %d - Error input!! \n", n);
             System.out.print(answer); 
-            return n; 
+            return -1; 
         }
 
     }    
@@ -92,7 +128,7 @@ public class Lab2p1 {
     public static int position(int n, int digit) {
         if (n > 0) {
             int pos = 1;
-            while (n > 1) {
+            while (n > 0) {
                 if (n % 10 == digit) {
                     return pos;
                 }
@@ -110,17 +146,19 @@ public class Lab2p1 {
         }
     }    
 
-    public static long extractOddDigits(int n, int digit) {
+    public static long extractOddDigits(long n) {
         if (n > 0) {
 
-            Double ans = 0;
-            Double pos = 0;
-            while (n > 1) {
-                if ((n % 10) % 2 == 1) {
-                    ans = ans + ((n%10) * (Math.pow(10, pos)));
+            long ans = 0;
+            long pos = 1;
+            while (n > 0) {
+
+                long digit = n % 10;
+                if (digit % 2 == 1) {
+                    ans += digit * pos;
                 }
                 n = n / 10;
-                pos++;
+                pos *= 10;
             }
 
             long ansL = Math.round(ans);
