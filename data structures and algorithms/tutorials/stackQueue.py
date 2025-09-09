@@ -20,10 +20,10 @@ class Stack:
     def pop(self):
         if self.is_empty():
             raise IndexError("Stack is empty")
-        val = self.top.val
+        node = self.top
         self.top = self.top.next
         self.size -= 1
-        return val
+        return node
 
     def peek(self):
         if self.is_empty():
@@ -55,12 +55,12 @@ class Queue:
     def dequeue(self):
         if self.is_empty():
             raise IndexError("Queue is empty")
-        val = self.front.val
+        node = self.front.val
         self.front = self.front.next
         if self.front is None:   # queue became empty
             self.rear = None
         self.size -= 1
-        return val
+        return node
 
     def peek(self):
         if self.is_empty():
