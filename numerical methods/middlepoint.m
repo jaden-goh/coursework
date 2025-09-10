@@ -26,7 +26,7 @@ function middlepoint(xmin, xmax, h, y0)
         else
             % Step 1: Predict the midpoint.
             % Calculate the x-value at the midpoint of the current interval.
-            xihalf = xn(i - 1) + 0.5 * h;
+            xihalf = xn(i - 1) + 0.5 * h;   
             
             % Use the Euler method to estimate the y-value at the midpoint.
             yihalf = yn(i - 1) + odefun(xn(i - 1), yn(i - 1)) * 0.5 * h;
