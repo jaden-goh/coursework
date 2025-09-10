@@ -1,4 +1,4 @@
-function midpoint(xmin, xmax, h, y0)
+function middlepoint(xmin, xmax, h, y0)
     nbin = round((xmax-xmin)/h);
     xn = zeros(nbin,1);
     yn = zeros(nbin,1);
