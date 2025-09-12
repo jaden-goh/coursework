@@ -9,7 +9,7 @@
 % xmax: The ending x-value.
 % eps: The tolerance for the error.
 % y0: The initial y-value at xmin.
-function adaptiveRK2(xmin, xmax, eps, y0)
+function adaptivemiddlepoint(xmin, xmax, eps, y0)
     % Initialize variables.
     h0 = 1;          % Initial step size
     xi = xmin;       % Current x-value
