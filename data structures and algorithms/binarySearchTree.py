@@ -52,6 +52,20 @@ def insert(root: binaryTreeNode, node: binaryTreeNode):
     return root
 
 def delete(root: binaryTreeNode, number: int):
+    if not root:
+        print("Number Not Found.")
+        return root
+    
+    if root.key == number:
+        if root.right:
+            if root.left:
+                root 
+
+    if number < root.key:
+        delete(root.left, number)
+    if number > root.key:
+        delete(root.right, number)
+
     return root
 
 def breadthFirstSearch(root: binaryTreeNode):
