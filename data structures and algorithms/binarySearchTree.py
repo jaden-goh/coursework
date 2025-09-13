@@ -51,20 +51,36 @@ def insert(root: binaryTreeNode, node: binaryTreeNode):
         return root
     return root
 
+def findMin(root: binaryTreeNode):
+    if not root:
+        return root
+    curr = root
+    if curr.left:
+        node = findMin(curr.left)
+    elif curr.right: 
+        node = findMin(curr.right)
+    else: 
+        return node.key
+
 def delete(root: binaryTreeNode, number: int):
+    # use inorder tree traversal
     if not root:
         print("Number Not Found.")
         return root
     
-    if root.key == number:
-        if root.right:
-            if root.left:
-                root 
-
     if number < root.key:
-        delete(root.left, number)
+        root.left = delete(root.left, number)
     if number > root.key:
-        delete(root.right, number)
+        root.right  = delete(root.right, number)
+    if number == root.key:
+        if not root.left:
+            return root.right
+        if not root.right:
+            return root.left
+        else:
+            minVal = findMin(root.right)
+            root.key = minVal
+            root.right = delete(root.right, minVal)
 
     return root
 
