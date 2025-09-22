@@ -1,12 +1,12 @@
-function newtonMethod(xi)
+function newtonMethod2D(xi) % xi is a 1x2 matrix
     eps = 10e-6;
     maxiter = 10000;
     xi1 = xi;
 
     for i = 1:maxiter
-        xi = xi1
-        xi1 = xi - functionfirstd(x) / functionsecondd(x);
-        if abs(xi1-xi) <eps; 
+        xi = xi1;
+        xi1 = xi - (hessian(xi))\gradient(xi);
+        if norm(xi1-xi) <eps; 
             steps = i;
             break
         end
@@ -15,10 +15,10 @@ function newtonMethod(xi)
 end
 
 
-function functionfirstd(x)
+function gradient(x)
     %insert function first derivative
 end 
 
-function functionsecondd(x)
+function hessian(x)
     %insert function second derivative
 end
