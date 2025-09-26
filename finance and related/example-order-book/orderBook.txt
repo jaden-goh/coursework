@@ -1,0 +1,39 @@
++-----------------------+
+|     Order             |
++-----------------------+
+| - id: int             |
+| - ticker: str         |
+| - side: str           |  // "BUY" or "SELL"
+| - price: float        |
+| - volume: int         |
+| - timestamp: datetime |
++-----------------------+
+| + __repr__(): str     |
++-----------------------+
+
++------------------------+
+|     Trade              |
++------------------------+
+| - trade_id: int        |
+| - buy_order_id: int    |
+| - sell_order_id: int   |
+| - price: float         |
+| - volume: int          |
+| - timestamp: datetime  |
++------------------------+
+| + __repr__(): str      |
++------------------------+
+
++----------------------------------+
+|     OrderBook                    |
++----------------------------------+
+| - buy_heap: PriorityQueue<Order> |
+| - sell_heap: PriorityQueue<Order>|
+| - orders: dict<int, Order>       |
+| - trades: list<Trade>            |
++----------------------------------+
+| + add_order(order: Order): None  |
+| + cancel_order(id: int): None    |
+| + match_orders(): list<Trade>    |
+| + display_book(): None           |
++----------------------------------+
