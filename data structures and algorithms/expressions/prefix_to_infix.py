@@ -72,3 +72,76 @@ if __name__ == "__main__":
         print(f"Infix expression: {infix_exp}")
     except ValueError as e:
         print(f"Error: {e}")
+
+
+
+
+
+
+
+
+def prefix_to_infix(tokens):
+    st = Stack()
+    tokens.reverse()
+    for t in tokens:
+        if t in PRECEDENCE:
+            # operator
+            if st.isEmpty(): raise ValueError("Insufficient Operands")
+            op1 = st.pop()
+            if st.isEmpty(): raise ValueError("Insufficient Operands")
+            op2 = st.pop()
+            st.push(op1 + t + op2)
+
+        else:
+            st.push(t)
+        
+    if st.get_size() != 1:
+        raise ValueError("Invalid expression")
+    return st.peek().split()
+
+def infix_to_postfix(tokens):
+    st = Stack()
+    out = []
+    for t in tokens:
+        if t == '(':
+            st.push(t)
+        if t == ')':
+            while not st.is_empty() and st.top != '(':
+                out.append(st.peek()), st.pop()
+            if st.is_empty:
+                raise ValueError("INVALID PARENTHESES")
+            st.pop() # remove (
+
+        if t in PRECEDENCE:
+            while not st.is_empty() and st.peek() in PRECEDENCE and (PRECEDENCE[t] <= PRECEDENCE[st.peek()]):
+                out.append(st.peek()); st.pop()
+            st.push(t)
+        
+        else:
+            out.append(t)
+    
+    while not st.is_empty():
+        top = st.pop()
+        if top in ('(', ")"):
+            raise ValueError("Invalid Expression")
+        out.append(top)
+    
+    return out
+
+def postfix_to_prefix(tokens):
+    st = Stack()
+    for t in tokens:
+        if t in PRECEDENCE:
+            # operator
+            if st.isEmpty(): raise ValueError("Insufficient Operands")
+            op1 = st.pop()
+            if st.isEmpty(): raise ValueError("Insufficient Operands")
+            op2 = st.pop()
+            st.push(t + op1 + op2)
+
+        else:
+            st.push(t)
+        
+    if st.get_size() != 1:
+        raise ValueError("Invalid expression")
+    return st.peek().split()
