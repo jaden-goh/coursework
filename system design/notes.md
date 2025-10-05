@@ -56,8 +56,6 @@ Fundamentally in a system we:
 
 # 📐 Metrics of a Good System
 
-# 📐 Metrics of a Good System
-
 ### Availability
 - Formula: Uptime / (Uptime + Downtime)
 - Defines **Service Level Objectives (SLOs)** and **Service Level Agreements (SLAs)**.  
