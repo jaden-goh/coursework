@@ -43,7 +43,13 @@
 
 From **fastest & smallest** → **slowest & largest**:  
 
+Size: HDD >> RAM >> CACHE
+Speed: CACHE >> RAM >> HDD
 
+Connections: HDD --> RAM, CPU --> RAM/CACHE 
+- CPU checks cache first for data it is looking for 
+- If not present, looks in RAM
+- If not present, requests for HDD to load data into the RAM, and checks RAM again
 
 # ⚙️ Fundamentals of a System
 
