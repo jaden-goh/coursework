@@ -1,5 +1,5 @@
 import java.util.Scanner;
-public class Numbers
+public class Strings
 {
 // --------------------------------------------
 // Reads in an array of integers, sorts them,
@@ -7,19 +7,19 @@ public class Numbers
 // --------------------------------------------
 public static void main (String[] args)
 {
-	int[] intList;
+	String[] strList;
 	int size;
 	Scanner scan = new Scanner(System.in);
-	System.out.print ("\nHow many integers do you want to sort? ");
+	System.out.print ("\nHow many strings do you want to sort? ");
 	size = scan.nextInt();
-	intList = new int[size];
-	System.out.println ("\nEnter the numbers...");
+	strList = new String[size];
+	System.out.println ("\nEnter a string...");
 	for (int i = 0; i < size; i++)
-		intList[i] = scan.nextInt();
-		Sorting.selectionSort(intList);
+		strList[i] = scan.next();
+		Sorting.selectionSort(strList);
 		System.out.println ("\nYour numbers in sorted order...");
 	for (int i = 0; i < size; i++)
-		System.out.print(intList[i] + " ");
+		System.out.print(strList[i] + " ");
 	System.out.println ();
 	}
 }
