@@ -14,3 +14,4 @@ HTTP (hyper text transfer protocol)
  - SSL/TLS (secure, tje S in HTTPS) or TLS (Transfer level security): 
     - fights against Man In The Middle Attacks
     - encrypts anything information to prevent anyone intercepting from finding your information
+
