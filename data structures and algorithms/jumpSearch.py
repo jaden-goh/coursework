@@ -10,7 +10,7 @@ def jumpSearch(arr, a):
         else:
             i += step
     
-    for j in range(i-n+1, i+1):
+    for j in range(i-step+1, i+1):
         if arr[j] == a:
             return f"Number {a} found at Index {j}"
         else:
