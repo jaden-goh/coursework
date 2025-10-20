@@ -1,4 +1,3 @@
-## Based on the Coursera Specialization: PostgreSQL for Everybody Specialization by University of Michigan
 
 #### SQL (Structured Query Language): used for (CRUD)
 - Create/Insert data
