@@ -48,3 +48,24 @@ SET discount = CASE
 				OR prodprice > 100 THEN 'Y'
 				ELSE 'N'
 				END;
+
+-- create new table for linking 
+-- ...
+ALTER TABLE supplier
+ADD COLUMN supplierid INTEGER;
+
+UPDATE supplier
+SET supplierid = 2
+WHERE name = 'Nike';
+
+UPDATE supplier
+SET supplierid = 1
+WHERE name = 'Levis';
+
+-- update default table
+ALTER TABLE product
+ADD COLUMN supplierid INTEGER; -- same name
+
+UPDATE product
+SET supplierid = 2
+WHERE prodnames = 'Jeans';
