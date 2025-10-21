@@ -31,3 +31,20 @@ WHERE prodprice > 40;
 -- delete values (on condition)
 DELETE FROM product
 WHERE prodnames = 'wrong';
+
+-- add column
+ALTER TABLE product
+ADD COLUMN discount VARCHAR(2);
+
+-- change column data type
+ALTER TABLE product
+ALTER COLUMN discount TYPE INTEGER
+USING discount::integer; -- casting
+
+-- altering data with conditions/cases
+UPDATE product
+SET discount = CASE 
+				WHEN prodprice < 40 
+				OR prodprice > 100 THEN 'Y'
+				ELSE 'N'
+				END;
