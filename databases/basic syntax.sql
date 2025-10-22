@@ -7,7 +7,10 @@ CREATE TABLE product (
 
 -- insert value into table
 INSERT INTO product (prodnames, prodqty, prodprice)
+				 -- (column 1, column 2, column 3)
 VALUES ('shoes', 5, 65), ('pants', 5, 30);
+	-- (Seperate values in each row with brackets, 
+	-- must match number of entries in top line)
 
 -- view entire table
 SELECT *

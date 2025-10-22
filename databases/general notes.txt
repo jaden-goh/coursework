@@ -1,0 +1,12 @@
+Primary keys in PostgreSQL:
+=========================================================================
+Uniqueness and Not Null: 
+    A primary key enforces uniqueness and a NOT NULL constraint 
+    on the specified column(s).
+
+Column Order in Composite Primary Keys: 
+    If you define a composite primary key (a primary key consisting of
+    multiple columns), the order of columns in the primary key definition
+    matters for the underlying index. The index will be created with the
+    columns in the order you specify, which can impact the efficiency of 
+    queries that filter on a subset of those columns.
