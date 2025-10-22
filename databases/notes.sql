@@ -51,8 +51,14 @@ SET discount = CASE
 
 -- create new table for linking 
 -- ...
-ALTER TABLE supplier
-ADD COLUMN supplierid INTEGER;
+CREATE TABLE supplier (
+	name VARCHAR(255)
+	supplierid SERIAL PRIMARY KEY; --makes it list like
+	CONSTRAINT fkprod
+			FOREIGN KEY(supplierid) --column in this table
+				REFERENCES "product"(prodnames) 
+				-- references (prodnames) column in other table "product"
+);
 
 UPDATE supplier
 SET supplierid = 2
@@ -69,3 +75,5 @@ ADD COLUMN supplierid INTEGER; -- same name
 UPDATE product
 SET supplierid = 2
 WHERE prodnames = 'Jeans';
+
+
