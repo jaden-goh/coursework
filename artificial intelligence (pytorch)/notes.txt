@@ -1,1 +1,3 @@
 Referencing freeCodeCamp's Pytorch for Machine Learning and Deep Learning
+
+## Note, change kernel to 3.11.14 torch
