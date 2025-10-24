@@ -1,3 +1,29 @@
 Referencing freeCodeCamp's Pytorch for Machine Learning and Deep Learning
 
 ## Note, change kernel to 3.11.14 torch
+
+Tensors, mathematical objects that can be used to describe physical properties, a generalization of scalars and vectors
+- For a more in-depth 
+
+Random Tensors: process of neural networks involve
+Start with random numbers -> looking at data -> updating random numbers
+-> look at data -> update numbers
+
+Tensor datatypes (a key source of errors):
+-> not right datatypes
+-> not right shape
+-> not right device
+
+Data types in tensors: 
+            32/64/16-floating point, 
+            32/64/128-bit complex, 
+            8/16/32/64-bit int,
+            8/16/32/64-bit uint (unsigned integer),
+            8/16/32-bit qint (quantized integer),
+            8/16/32-bit quint (quantized unsigned integer),
+            half (16-bit (half precision) floating-point), 
+            bool,
+            double,
+            string,
+            variant (arbitrary type),
+            
