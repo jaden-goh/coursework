@@ -1,5 +1,21 @@
 git clone -b feature-branch https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
 
+    after cloning:
+    # 1 go into the repo
+    cd .\repo-name\
+
+    # 2 confirm you’re on the right branch
+    git status
+    # or
+    git branch -vv
+
+    # 3 (optional) pull latest just in case
+    git pull
+
+    # 4 open code
+    code .
+
+
 git checkout ( this is how you will switch to the branch you want to branch off of ie. master/prod/dev )
 
 git pull ( this is how you will pull all updates from the origin/git )
@@ -11,17 +27,7 @@ git add . ( this will add the code changes to staging )
 git commit -m "summary of commit ( this will commit those changes )
 
 git push -u origin 'fix/feature branch you want to push' ( this will push up your branch to git )
+e.g git push -u origin feature/jaden
 
-# 1 go into the repo
-cd .\oop-project-ay2526\
-
-# 2 confirm you’re on the right branch
-git status
-# or
-git branch -vv
-
-# 3 (optional) pull latest just in case
-git pull
-
-# 4 open code
-code .
+if push to main, do:
+    
