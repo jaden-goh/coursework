@@ -30,4 +30,5 @@ git push -u origin 'fix/feature branch you want to push' ( this will push up you
 e.g git push -u origin feature/jaden
 
 if push to main, do:
+    git push origin jaden(or whatever branch name):main
     
