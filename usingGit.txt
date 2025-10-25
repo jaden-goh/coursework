@@ -11,3 +11,17 @@ git add . ( this will add the code changes to staging )
 git commit -m "summary of commit ( this will commit those changes )
 
 git push -u origin 'fix/feature branch you want to push' ( this will push up your branch to git )
+
+# 1 go into the repo
+cd .\oop-project-ay2526\
+
+# 2 confirm you’re on the right branch
+git status
+# or
+git branch -vv
+
+# 3 (optional) pull latest just in case
+git pull
+
+# 4 open code
+code .
