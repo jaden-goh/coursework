@@ -11,6 +11,3 @@ git add . ( this will add the code changes to staging )
 git commit -m "summary of commit ( this will commit those changes )
 
 git push -u origin 'fix/feature branch you want to push' ( this will push up your branch to git )
-
-git clone -b feature-branch https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-
