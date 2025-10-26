@@ -35,6 +35,6 @@ public class Library<T extends Searchable> {
                     .collect(Collectors.toList());
     }
     
-    // recommending book
+    // recommending book with switch
     public static void recommendBook() {};
 }
