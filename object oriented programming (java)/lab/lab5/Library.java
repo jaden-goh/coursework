@@ -28,11 +28,13 @@ public class Library<T extends Searchable> {
         return new ArrayList<>(items); 
     }
 
+    // Searching by keyword using streaming
     public List<T> search(String keyword) {
         return items.stream()
                     .filter(item -> item.matches(keyword))
                     .collect(Collectors.toList());
     }
     
-    
+    // recommending book
+    public static void recommendBook() {};
 }

@@ -22,6 +22,8 @@ public class Main {
 
             genres.forEach(genre -> System.out.println(genre));
         }
+
+        public static void recommendBook() {};
     }               
 }
 
