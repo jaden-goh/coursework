@@ -43,7 +43,7 @@ public class Library<T extends Searchable & HasGenre> {
         List<T> result = items.stream()
                     .filter(item -> item.matches(keyword) == true)
                     .collect(Collectors.toList());
-        result.forEach(item -> item.toString());
+        result.forEach(item -> System.out.println(item.toString()));
     }
     
     // genres, obtain with stream(), print with lambdas
@@ -59,16 +59,17 @@ public class Library<T extends Searchable & HasGenre> {
         List<T> result = items.stream()
                             .filter(item -> item.getGenre().toLowerCase().equals(genre.toLowerCase()))
                             .collect(Collectors.toList());
-        result.forEach(item->item.toString());                
+
+        result.forEach(item -> System.out.println(item.toString()));
     }
 
-    // recommending book with switch
     public void recommendBook(String genre) {
         switch (genre.toLowerCase()) {
             case "fantasy":
             case "romance":
             case "sci-fi":
             case "dystopian":
+                System.out.println("Recommend: ");
                 filter(genre);
                 break;
         default:
