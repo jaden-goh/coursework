@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
     public class LibraryApp {
@@ -15,12 +14,7 @@ public class Main {
             // add too lib1, with lambda
             books.forEach(book -> Lib1.addItem(book));
         
-            // genres, obtain with stream(), print with lambdas
-            Set<String> genres = Lib1.getAllItems().stream()
-                                        .map(Book -> Book.getGenre())
-                                        .collect(Collectors.toSet());
-
-            genres.forEach(genre -> System.out.println(genre));
+            
         }
 
         public static void recommendBook() {};
