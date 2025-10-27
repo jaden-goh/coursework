@@ -13,6 +13,7 @@ public class Book implements Searchable, HasGenre {
     }
     public String getTitle() { return title; }
     public String getAuthor() { return author; }
+    @Override
     public String getGenre() { return genre; }
     public int getPublicationYear() { return publicationYear; }
 
