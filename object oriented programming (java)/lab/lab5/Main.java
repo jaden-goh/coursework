@@ -1,7 +1,6 @@
 import java.util.*;
 
 public class Main {
-    public class LibraryApp {
         public static void main(String args[]) {
             Library<Book> Lib1 = new Library<>();
 
@@ -14,10 +13,11 @@ public class Main {
             // add too lib1, with lambda
             books.forEach(book -> Lib1.addItem(book));
         
-            
+            Lib1.getAllItems();
+            Lib1.filter("Dystopian");
+            Lib1.recommendBook("Fantasy");
+
+
+
         }
-
-        public static void recommendBook() {};
     }               
-}
-
