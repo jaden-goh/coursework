@@ -3,7 +3,7 @@ import java.util.*;
 public class Main {
     public class LibraryApp {
         public static void main(String args[]) {
-            Library<Book> Lib1 = new Library();
+            Library<Book> Lib1 = new Library<>();
 
             List<Book> books = Arrays.asList(
             new Book("1984", "George Orwell", "Dystopian", 1949),

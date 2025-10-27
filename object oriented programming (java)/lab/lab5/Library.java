@@ -55,6 +55,23 @@ public class Library<T extends Searchable & HasGenre> {
         return genres;    
     }   
     
+    public void filter(String genre) {
+        List<T> result = items.stream()
+                            .filter(item -> item.getGenre().toLowerCase().equals(genre.toLowerCase()))
+                            .collect(Collectors.toList());
+        result.forEach(item->item.toString());                
+    }
+
     // recommending book with switch
-    public static void recommendBook() {};
+    public void recommendBook(String genre) {
+        switch (genre.toLowerCase()) {
+            case "fantasy":
+            case "romance":
+            case "sci-fi":
+            case "dystopian":
+                filter(genre);
+                break;
+        default:
+            System.out.println("No such genre!");
+}};
 }

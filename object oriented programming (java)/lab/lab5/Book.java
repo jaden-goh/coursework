@@ -1,14 +1,14 @@
 
-public class Book implements Searchable {
+public class Book implements Searchable, HasGenre {
     public String title;
     public String author;
     public String genre;
     public int publicationYear;
 
     public Book(String title, String author, String genre, int publicationYear) {
-        this.title = title;
-        this.author = author;
-        this.genre = genre;
+        this.title = title.toLowerCase();
+        this.author = author.toLowerCase();
+        this.genre = genre.toLowerCase();
         this.publicationYear = publicationYear;
     }
     public String getTitle() { return title; }
