@@ -4,7 +4,11 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 
-public class Library<T extends Searchable> {
+public class Library<T extends Searchable & HasGenre> {
+            // a generic can extend one class/interface, the & operator acts
+            // another bound that T must have that must be an interface 
+            /// (anythign after the & must be interface, extends can be a class)
+            
     private List<T> items;
 
     public Library() {
@@ -43,12 +47,12 @@ public class Library<T extends Searchable> {
     }
     
     // genres, obtain with stream(), print with lambdas
-    public void getGenres() {
+    public Set<String> getGenres() {
         Set<String> genres = items.stream()
-                                    .map(Book -> Book.getGenre())
+                                    .map(HasGenre::getGenre)
                                     .collect(Collectors.toSet());
 
-        genres.forEach(genre -> System.out.println(genre));
+        return genres;    
     }   
     
     // recommending book with switch
