@@ -10,3 +10,57 @@ Column Order in Composite Primary Keys:
     matters for the underlying index. The index will be created with the
     columns in the order you specify, which can impact the efficiency of 
     queries that filter on a subset of those columns.
+==========================================================================
+
+
+*** PostgreSQL Implements ACID Model: *** 
+    - Atomicity (all or nothing)
+    - Consistency (always moves from a valid state to another)
+    - Isolation (concurrent transactions do not interfere each other)
+    - Durability (once a transaction is done, it will remain and not be lost even if it crashes)
+
+*** PostgreSQL is a Object Relational Database ***
+    - Supports table inheritance, user-defined functions, etc.
+
+*** PostgreSQL has a Client Server Architecture ***
+    - Main process "Postmaster" Interacts with client and Postgres
+        - connects via TCP
+    - Backend Processes (1 per active connections)
+        - handles caching and checkpointing
+    - Logic and Data is stored on separate parts of the architecture
+    - Data stored on a "disk" in a database cluster
+        - Contains databases, schemas, tables, WAL logs
+        - every table is stored as a HEAP FILE (8KB), containing
+            - headers with metadata
+            - array of item pointers to the data
+            - tuples with data and more metadata (creation command no, deletion id, visibility etc.)
+
+*** TOAST (the oversized-attribute storage technique) ***
+    Automatic mechanism to handle data values exceeding the heap file size (8KB)
+    Methods: 
+    1- if Row is too large, compress with PGLZ (PostgreSQL Lempel-Ziv) algorithm 
+    2- Out of Line Storage: >1GB tables are stored by automatically splitting them into multiple physical files on disk
+
+*** Multi Version Concurrency Control ***
+    Goal: to allow multiple queries to read and write without interfering each other
+    Principle:
+    - Database management system never overwrites existing rows
+    - For each row of logic it maintains multiple versions of data with txn IDs, and decides which version to push
+    - Multiple queries can read older versions of rows as snapshots (can only read latest snapshot before itself)
+    - readers dont block writers and vice versa
+    - readers will just access the relevant snapshot, and writers will just create their own version of the data
+    - visibility: readers can only see transactions whos Xmin is before the current timestamp (i.e has already been created) and whos XMAX is after the current timestamp (i.e hasnt been deleted)
+    - the Vacuum process reclaims dead tuples (outdated versions not visible to any active transaction)
+
+*** Write Ahead Logging ***
+    Guarantees Durability
+    - Before any change is written to files, it is written to WAL
+    - Any crashes can be fixed by re-reading the WAL, and any streams looking to replicate can read over the WAL
+    - Checkpoints are a sync point and manages memory and storage on disk
+    - Will push dirty buffers to disk from memory to remove the need of reading too much
+    - Checkpoint frequency and WAL Size are key for performance and recovery speed
+
+
+
+
+==========================================================================
