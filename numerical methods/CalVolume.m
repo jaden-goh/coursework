@@ -1,5 +1,5 @@
 function S = CalVolume(a,b,n)
-    N = 10000;                    % number of subdivisions
+    N = 100000;                    % number of subdivisions
     dx = a/N;
     sum_val = 0;
 

@@ -18,11 +18,11 @@ function DrawSuperellipse(r0,a,b,n,ex,ey)
         theta = theta + h;
     end
 
-    % Rotation matrix
+    % Rotation
     R = [ex(:), ey(:)];
     pts_rot = (R*pts')';
 
-    % Translate to center
+    % Translate to r0
     pts_final = pts_rot + repmat(r0(:)', size(pts_rot,1), 1);
 
     plot(pts_final(:,1),pts_final(:,2),'k-','LineWidth',2);

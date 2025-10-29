@@ -20,7 +20,7 @@ figure;
 plot(n_vals,S_num,'r-','LineWidth',2); hold on;
 plot(n_vals,S_ana,'b--','LineWidth',2);
 xlabel('n'); ylabel('Area S');
-legend('Numerical (manual)','Analytical');
+legend('Numerical','Analytical');
 title('Superellipse Area vs n');
 grid on;
 
