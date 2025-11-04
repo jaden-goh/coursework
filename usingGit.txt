@@ -15,19 +15,28 @@ git clone -b feature-branch https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
     # 4 open code
     code .
 
+For project branching
 
-git checkout ( this is how you will switch to the branch you want to branch off of ie. master/prod/dev )
+#GET LATEST UPDATES ON MAIN 
 
-git pull ( this is how you will pull all updates from the origin/git )
+git switch main
+git pull origin main
 
-git checkout -b 'branch name' ( this is the branch you will create to write your fix/feature )
+# CHANGE BRANCH
+git switch -c feature-branch-name
+# or: git checkout -b feature-branch-name
 
-git add . ( this will add the code changes to staging )
+# COMMITS
+git add file1.py file2.js   # or: git add .  (to add everything modified)
+git commit -m "Short, clear message about what you did"
 
-git commit -m "summary of commit ( this will commit those changes )
+git switch main
+git pull origin main                   # ensure main is up to date
+git merge feature-branch-name          # merge your work into main
+    may need to Esc - :wq - Enter out of vim
+git push origin main                   # push updated main to remote
 
-git push -u origin 'fix/feature branch you want to push' ( this will push up your branch to git )
-e.g git push -u origin feature/jaden
+
 
 if push to main, do:
     git push origin jaden(or whatever branch name):main
