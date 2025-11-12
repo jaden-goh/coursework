@@ -97,3 +97,4 @@ d2u = (2*a/n)*((m-1)*abs_c^(m-2)*(c*s) - abs_c^(m-1)*cos(t));
 d2v = (2*b/n)*((m-1)*abs_s^(m-2)*(s*c) - abs_s^(m-1)*sin(t));
 d2p = d2u*ex + d2v*ey;
 end
+    
