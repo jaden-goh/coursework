@@ -63,21 +63,57 @@ def merge(left, right):
 
     return result
 
-# Example usage:
-my_list = [38, 27, 43, 3, 9, 82, 10]
-sorted_list = merge_sort(my_list)
-print(f"Original list: {my_list}")
-print(f"Sorted list: {sorted_list}")
-
 def dualSortedSearch(A,size,K):
     ans = []
     A = merge_sort(A)
     
-    for i in range(0,size):
-        l = 0
-        r = size-1
-        mid = (l+r) // 2
-        while mid < size-1:
-            if A[i] + A[mid] < K:
-                mid = (mid + size - 1) // 2
-            elif A[i] + A[mid] = 
+    i = 0
+    j = size -1
+
+    while i<=j:
+        if A[i] + A[j] > K:
+            j -= 1
+        elif A[i] + A[j] < K:
+            i += 1
+        else:
+            ans.append(i), ans.append(j)
+            return ans
+    return False
+
+"""
+Q4 Given two arrays num1 and num2. Both are sorted in an ascending order.
+The length is m and n, respectively. Please find the median of the two
+arrays with time complexity being 𝑂(log(𝑚+𝑛)). You can apply binary
+search to partition the arrays. 
+"""
+def findMedian(num1, num2):
+    if len(num2) < len(num1):
+        num1, num2 = num2, num1
+    # num 1 will always be shorter
+    
+    total = len(num1) + len(num2)
+    half = total //2
+
+    # partitioning
+    l,  r = 0, len(num1) - 1
+    
+    while True:
+        mid1 = (l+r)//2 # index of midpoint
+        mid2 = half - mid1 - 2 # index of midpoint, not size 
+
+        left1 = num1[mid1] if mid1 >= 0 else float("-infinity")
+        right1 = num1[mid1+1] if mid1+1 < len(num1) else float("infinity") 
+
+        left2 = num2[mid2] if mid2 >= 0 else float("-infinity")
+        right2 = num2[mid2+1] if mid2+1 < len(num2) else float("infinity") 
+
+        if left1 < right2 and right1 < left2:
+            # odd
+            if total % 2 == 1:
+                return min(right1, right2)
+            else:
+                return (max(left1, left2) + min(right1, right2)) / 2
+        elif left1 > right2:
+            r = mid1 - 1
+        else:
+            l = mid1 + 1
