@@ -4,7 +4,7 @@ def quicksort(arr):
     
     pivot = len(arr)-1
     curr = 0
-    for i in range(0:pivot):
+    for i in range(0, pivot):
         if arr[i] > arr[pivot]:
             pass
         else:
@@ -17,9 +17,11 @@ def quicksort(arr):
     arr[pivot] = arr[curr]
     arr[curr] = temp
 
-    quicksort(arr[0:curr+1])
+    quicksort(arr[0:curr])
     quicksort(arr[curr+1::])
 
 a = [1,5,2,5,6,7,12315,16,1,12059,62,3]
 quicksort(a)
 print(a)
+
+# needs work
