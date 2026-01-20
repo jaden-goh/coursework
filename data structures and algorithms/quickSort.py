@@ -1,5 +1,5 @@
 def quicksort(arr, low, high):
-    if len(arr) == 1 or len(arr) == 0:
+    if low >= high:
         return None
     
     pivot = high
@@ -17,8 +17,8 @@ def quicksort(arr, low, high):
     arr[pivot] = arr[curr]
     arr[curr] = temp
 
-    quicksort(arr, low, curr)
-    quicksort(arr, curr, high)
+    quicksort(arr, low, curr-1)
+    quicksort(arr, curr+1, high)
 
 a = [1,5,2,5,6,7,12315,16,1,12059,62,3]
 
