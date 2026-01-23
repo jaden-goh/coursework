@@ -1,12 +1,12 @@
 def quicksort(arr, low, high):
     if low >= high:
-        return None
+        return None #base case, if indexes are narrow enough, go back out of loop
     
     pivot = high
-    curr = low
-    for i in range(low, pivot):
-        if arr[i] > arr[pivot]:
-            pass
+    curr = low # denotes the swapping index
+    for i in range(low, pivot): # from starting index, if value is <= the pivot value, swap with curr, move curr index up
+        if arr[i] < arr[pivot]:
+            pass 
         else:
             temp = arr[i]
             arr[i] = arr[curr]
