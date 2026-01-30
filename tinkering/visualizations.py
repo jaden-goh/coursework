@@ -735,9 +735,8 @@ if __name__ == "__main__":
 
     common = dict(
         N=2600,
-        palette_name="random",     # <-- randomize palette
+        palette_name="random",     
         palette_bins=6,
-        # palette_per_frame=True,  # <-- uncomment for chaos mode (palette changes every frame)
         dot_size=2.0,
         alpha=0.95,
         size_px=900,
