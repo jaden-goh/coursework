@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Fermi Estimation Trainer (Local)</title>
+  <style>
+    :root { --bg:#0b0f14; --panel:#111826; --muted:#9aa4b2; --text:#e6edf3; --accent:#6ee7ff; --good:#34d399; --bad:#fb7185; }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:980px;margin:0 auto;padding:18px;}
+    h1{font-size:20px;margin:0 0 10px 0;}
+    .row{display:flex;gap:12px;flex-wrap:wrap;}
+    .card{background:var(--panel);border:1px solid #1f2a3a;border-radius:14px;padding:14px;flex:1;min-width:280px;}
+    label{display:block;font-size:12px;color:var(--muted);margin:10px 0 6px;}
+    input, select {width:100%;padding:10px;border-radius:10px;border:1px solid #243246;background:#0c1320;color:var(--text);box-sizing:border-box;}
+    input[type="range"]{padding:0;}
+    button{cursor:pointer;border:1px solid #2a3a54;background:#0c1320;color:var(--text);padding:10px 12px;border-radius:12px;}
+    button:hover{border-color:#3b537a;}
+    .pill{display:inline-block;padding:4px 10px;border-radius:999px;font-size:12px;border:1px solid #2a3a54;color:var(--muted);}
+    .q{font-size:16px;line-height:1.35;margin:6px 0 8px;}
+    .muted{color:var(--muted);font-size:13px;line-height:1.4;}
+    .hr{height:1px;background:#1f2a3a;margin:12px 0;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+    .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+    .small{font-size:12px;color:var(--muted);}
+    .good{color:var(--good);}
+    .bad{color:var(--bad);}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace;}
+    .list{max-height:280px;overflow:auto;border-radius:12px;border:1px solid #243246;}
+    .item{padding:10px;border-bottom:1px solid #1f2a3a;}
+    .item:last-child{border-bottom:none;}
+    .right{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;}
+    .kbd{font-family:ui-monospace,monospace;border:1px solid #2a3a54;border-bottom-color:#1a2436;padding:1px 6px;border-radius:6px;color:var(--muted);font-size:12px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Fermi Estimation Trainer — Local Game</h1>
+    <div class="muted">
+      Enter a best guess + a range + your confidence that the true value lies inside your range.
+      Later, after you verify the real value, type it in and the app will score your calibration.
+      <span class="pill">All data stays on your device (localStorage)</span>
+    </div>
+
+    <div class="row" style="margin-top:12px;">
+      <div class="card">
+        <div class="row" style="align-items:center;justify-content:space-between;">
+          <div>
+            <div class="pill">Question <span id="qIndex"></span>/<span id="qTotal"></span></div>
+          </div>
+          <div class="right">
+            <button id="prevBtn">← Prev</button>
+            <button id="nextBtn">Next →</button>
+            <button id="randBtn">Random 🎲</button>
+          </div>
+        </div>
+
+        <div class="q" id="questionText"></div>
+        <div class="small" id="questionMeta"></div>
+
+        <div class="hr"></div>
+
+        <div class="grid3">
+          <div>
+            <label>Best estimate</label>
+            <input id="best" type="number" step="any" placeholder="e.g. 3.2e6 or 3200000">
+          </div>
+          <div>
+            <label>Low (range)</label>
+            <input id="low" type="number" step="any" placeholder="lower bound">
+          </div>
+          <div>
+            <label>High (range)</label>
+            <input id="high" type="number" step="any" placeholder="upper bound">
+          </div>
+        </div>
+
+        <label>Confidence that true value is inside your range: <span id="confLabel" class="mono"></span>%</label>
+        <input id="conf" type="range" min="50" max="99" value="80">
+
+        <div class="grid2">
+          <div>
+            <label>Actual value (optional; enter after you check)</label>
+            <input id="actual" type="number" step="any" placeholder="leave blank until you verify">
+          </div>
+          <div>
+            <label>Quick actions</label>
+            <div class="right">
+              <button id="saveBtn">Save</button>
+              <button id="clearBtn">Clear this</button>
+              <button id="revealBtn">Show score</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+
+        <div id="scoreBox" class="muted">
+          Tip: aim for honest ranges. If you keep missing with 80–90% confidence, you’re overconfident (ranges too tight).
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="row" style="align-items:center;justify-content:space-between;">
+          <div class="pill">Dashboard</div>
+          <div class="right">
+            <button id="exportBtn">Export JSON</button>
+            <button id="resetAllBtn">Reset All</button>
+          </div>
+        </div>
+
+        <div class="hr"></div>
+        <div id="dash" class="muted"></div>
+
+        <div class="hr"></div>
+        <div class="pill">Recent attempts</div>
+        <div class="list" id="recent"></div>
+
+        <div class="hr"></div>
+        <div class="small">
+          Hotkeys: <span class="kbd">←</span>/<span class="kbd">→</span> for prev/next, <span class="kbd">S</span> save, <span class="kbd">R</span> random.
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* -------------------- 100 QUESTIONS -------------------- */
+/* You can edit/add questions freely. Units matter for sanity. */
+const QUESTIONS = [
+  // Singapore
+  {id:"SG01", region:"SG", unit:"people", text:"Population of Singapore (order of magnitude)."},
+  {id:"SG02", region:"SG", unit:"SGD", text:"Average price of a kopi (coffee) at a hawker centre."},
+  {id:"SG03", region:"SG", unit:"SGD", text:"Average monthly rent for a 3-room HDB flat (non-mature estate)."},
+  {id:"SG04", region:"SG", unit:"km", text:"Length of the Downtown MRT Line."},
+  {id:"SG05", region:"SG", unit:"trips/day", text:"Average daily MRT ridership."},
+  {id:"SG06", region:"SG", unit:"minutes", text:"Typical peak-hour commute time from Jurong East to Raffles Place (MRT)."},
+  {id:"SG07", region:"SG", unit:"°C", text:"Average daily high temperature in Singapore."},
+  {id:"SG08", region:"SG", unit:"mm/year", text:"Annual rainfall in Singapore."},
+  {id:"SG09", region:"SG", unit:"containers/year", text:"TEU throughput at PSA/Singapore port per year."},
+  {id:"SG10", region:"SG", unit:"SGD", text:"Average cost of a chicken rice meal at a hawker centre."},
+  {id:"SG11", region:"SG", unit:"SGD", text:"ERP charge on a busy expressway gantry during peak."},
+  {id:"SG12", region:"SG", unit:"km²", text:"Land area of Singapore."},
+  {id:"SG13", region:"SG", unit:"years", text:"Median age of Singapore residents."},
+  {id:"SG14", region:"SG", unit:"SGD", text:"Price of a standard movie ticket on a weekend."},
+  {id:"SG15", region:"SG", unit:"months", text:"Typical waiting time for a BTO project from booking to keys."},
+
+  // Hong Kong
+  {id:"HK01", region:"HK", unit:"people", text:"Population of Hong Kong."},
+  {id:"HK02", region:"HK", unit:"HKD", text:"Average price of a bowl of wonton noodles."},
+  {id:"HK03", region:"HK", unit:"HKD", text:"Typical Octopus card single trip fare on MTR (mid-distance)."},
+  {id:"HK04", region:"HK", unit:"km", text:"Length of the MTR network."},
+  {id:"HK05", region:"HK", unit:"people/km²", text:"Population density of Hong Kong."},
+  {id:"HK06", region:"HK", unit:"HKD/month", text:"Average rent for a small 1-bedroom apartment in a central-ish area."},
+  {id:"HK07", region:"HK", unit:"m", text:"Height of Victoria Peak (approx)."},
+  {id:"HK08", region:"HK", unit:"°C", text:"Average summer (July/Aug) daily high temperature."},
+  {id:"HK09", region:"HK", unit:"passengers/day", text:"Daily MTR ridership."},
+  {id:"HK10", region:"HK", unit:"containers/year", text:"Annual TEU throughput at Hong Kong port."},
+
+  // Australia
+  {id:"AU01", region:"AU", unit:"people", text:"Population of Australia."},
+  {id:"AU02", region:"AU", unit:"km", text:"Driving distance from Sydney to Melbourne (shortest typical route)."},
+  {id:"AU03", region:"AU", unit:"people", text:"Population of Sydney."},
+  {id:"AU04", region:"AU", unit:"AUD", text:"Average price of a flat white at a cafe."},
+  {id:"AU05", region:"AU", unit:"AUD/month", text:"Average rent for a 1-bedroom apartment near Melbourne CBD."},
+  {id:"AU06", region:"AU", unit:"minutes", text:"Average one-way commute time in a major Australian city."},
+  {id:"AU07", region:"AU", unit:"km²", text:"Area of Australia."},
+  {id:"AU08", region:"AU", unit:"people", text:"Population of Brisbane."},
+  {id:"AU09", region:"AU", unit:"AUD", text:"Average cost of a domestic flight Sydney↔Melbourne (one-way, not sale)."},
+  {id:"AU10", region:"AU", unit:"tons/year", text:"Annual iron ore exports from Australia (order of magnitude)."},
+
+  // Cross-region / travel / “spot questions”
+  {id:"X01", region:"APAC", unit:"minutes", text:"Flight time from Singapore to Hong Kong (typical direct)."},
+  {id:"X02", region:"APAC", unit:"minutes", text:"Flight time from Singapore to Sydney (typical direct)."},
+  {id:"X03", region:"APAC", unit:"people/year", text:"Annual tourist arrivals to Singapore (order of magnitude)."},
+  {id:"X04", region:"APAC", unit:"people/year", text:"Annual tourist arrivals to Hong Kong (order of magnitude)."},
+  {id:"X05", region:"APAC", unit:"SGD", text:"Average cost of a 3-day trip in Singapore for a budget traveller (excluding flights)."},
+  {id:"X06", region:"APAC", unit:"HKD", text:"Average cost of a 3-day trip in Hong Kong for a budget traveller (excluding flights)."},
+  {id:"X07", region:"APAC", unit:"AUD", text:"Average cost of a 5-day trip in Sydney for a budget traveller (excluding flights)."},
+
+  // Tech / trends
+  {id:"T01", region:"Trend", unit:"hours/day", text:"Average daily screen time (smartphone) for a young adult."},
+  {id:"T02", region:"Trend", unit:"%", text:"Share of people using contactless payments weekly (in a developed city)."},
+  {id:"T03", region:"Trend", unit:"%", text:"Percent of households with at least one streaming subscription."},
+  {id:"T04", region:"Trend", unit:"GB/month", text:"Average mobile data use per user per month."},
+  {id:"T05", region:"Trend", unit:"%", text:"Share of rides that are food delivery vs ride-hailing trips in a big city (rough)."},
+  {id:"T06", region:"Trend", unit:"%", text:"Percent of students who use AI tools weekly for schoolwork (rough)."},
+  {id:"T07", region:"Trend", unit:"minutes", text:"Average time spent on short-form video per day (rough)."},
+  {id:"T08", region:"Trend", unit:"%", text:"Percent of people who have tried investing in crypto at least once (rough)."},
+  {id:"T09", region:"Trend", unit:"%", text:"Percent of online purchases delivered within 48 hours (rough)."},
+  {id:"T10", region:"Trend", unit:"years", text:"Average lifespan of a smartphone before replacement."},
+
+  // Economics / everyday
+  {id:"E01", region:"Econ", unit:"USD", text:"GDP of Singapore (order of magnitude)."},
+  {id:"E02", region:"Econ", unit:"USD", text:"GDP of Hong Kong (order of magnitude)."},
+  {id:"E03", region:"Econ", unit:"USD", text:"GDP of Australia (order of magnitude)."},
+  {id:"E04", region:"Econ", unit:"%", text:"Inflation rate in a typical year for a developed economy."},
+  {id:"E05", region:"Econ", unit:"%", text:"Unemployment rate in a typical year for a developed economy."},
+  {id:"E06", region:"Econ", unit:"USD", text:"Market cap of a top-5 global tech company (order of magnitude)."},
+  {id:"E07", region:"Econ", unit:"USD", text:"Average global oil price per barrel (order of magnitude)."},
+  {id:"E08", region:"Econ", unit:"USD", text:"Cost to manufacture a mid-range smartphone (bill of materials, rough)."},
+  {id:"E09", region:"Econ", unit:"USD", text:"Average monthly groceries cost for a single person in a big city."},
+  {id:"E10", region:"Econ", unit:"%", text:"Share of income spent on housing for a typical renter in a major city."},
+
+  // Environment / geography
+  {id:"G01", region:"Geo", unit:"m", text:"Height of Marina Bay Sands (to roof, rough)."},
+  {id:"G02", region:"Geo", unit:"m", text:"Height of Victoria Harbour skyline’s tallest building (order)."},
+  {id:"G03", region:"Geo", unit:"m", text:"Height of Sydney Opera House at highest point (rough)."},
+  {id:"G04", region:"Geo", unit:"km", text:"Length of the Great Barrier Reef (rough)."},
+  {id:"G05", region:"Geo", unit:"km", text:"Distance from Singapore to Hong Kong (as-the-crow-flies)."},
+  {id:"G06", region:"Geo", unit:"km", text:"Distance from Singapore to Sydney (as-the-crow-flies)."},
+  {id:"G07", region:"Geo", unit:"m", text:"Highest elevation point in Singapore (Bukit Timah Hill)."},
+  {id:"G08", region:"Geo", unit:"m", text:"Highest point in Hong Kong (Tai Mo Shan)."},
+  {id:"G09", region:"Geo", unit:"m", text:"Highest point in Australia (Mount Kosciuszko)."},
+  {id:"G10", region:"Geo", unit:"tons/day", text:"Daily municipal waste generated by a city of ~5 million (order)."},
+  {id:"G11", region:"Geo", unit:"L/day", text:"Daily water use per person in a developed city (order)."},
+  {id:"G12", region:"Geo", unit:"kWh/day", text:"Average household electricity use per day (rough)."},
+  {id:"G13", region:"Geo", unit:"ppm", text:"Current atmospheric CO₂ concentration (order)."},
+  {id:"G14", region:"Geo", unit:"mm/year", text:"Sea level rise rate (order)."},
+  {id:"G15", region:"Geo", unit:"°C", text:"Average global temperature increase vs preindustrial (order)."},
+  
+  // Sports / culture
+  {id:"C01", region:"Culture", unit:"people", text:"Capacity of the Melbourne Cricket Ground (MCG) (order)."},
+  {id:"C02", region:"Culture", unit:"people", text:"Capacity of Singapore National Stadium (order)."},
+  {id:"C03", region:"Culture", unit:"people", text:"Capacity of Hong Kong Stadium (order)."},
+  {id:"C04", region:"Culture", unit:"SGD", text:"Cost of a mid-tier concert ticket in Singapore (rough)."},
+  {id:"C05", region:"Culture", unit:"AUD", text:"Cost of an AFL/NRL match ticket in Australia (rough)."},
+  {id:"C06", region:"Culture", unit:"HKD", text:"Cost of a cinema ticket in Hong Kong (rough)."},
+  {id:"C07", region:"Culture", unit:"minutes", text:"Length of a standard soccer match including halftime (no stoppage)."},
+  {id:"C08", region:"Culture", unit:"minutes", text:"Average length of a Marvel movie (rough)."},
+  {id:"C09", region:"Culture", unit:"books/year", text:"Books read per person per year in a high-education country (order)."},
+  {id:"C10", region:"Culture", unit:"hours/week", text:"Average time spent exercising per adult per week (rough)."},
+  
+  // Random Fermi classics (useful for “spotting”)
+  {id:"F01", region:"Classic", unit:"pianos", text:"Number of pianos in your country (order of magnitude)."},
+  {id:"F02", region:"Classic", unit:"barbers", text:"Number of barbers in a city of 5 million."},
+  {id:"F03", region:"Classic", unit:"grains", text:"Number of grains of rice in a 5kg bag."},
+  {id:"F04", region:"Classic", unit:"seconds", text:"How many seconds in a year."},
+  {id:"F05", region:"Classic", unit:"emails/day", text:"How many emails a mid-size company sends per day."},
+  {id:"F06", region:"Classic", unit:"cups/day", text:"Cups of coffee sold per day in a city of 5 million."},
+  {id:"F07", region:"Classic", unit:"$", text:"How much revenue a large supermarket makes per day (order)."},
+  {id:"F08", region:"Classic", unit:"people", text:"How many people pass through a busy MRT station in a day (order)."},
+  {id:"F09", region:"Classic", unit:"liters", text:"How much milk a cafe uses per day (order)."},
+  {id:"F10", region:"Classic", unit:"steps/day", text:"Average steps per day for a reasonably active adult."},
+  
+  // Finance-ish (quant practice vibes, still Fermi)
+  {id:"Q01", region:"Quant", unit:"trades/day", text:"Number of trades executed per day on a major stock exchange (order)."},
+  {id:"Q02", region:"Quant", unit:"USD", text:"Daily trading volume (notional) of a major stock exchange (order)."},
+  {id:"Q03", region:"Quant", unit:"USD", text:"Market cap of the entire stock market of a large developed country (order)."},
+  {id:"Q04", region:"Quant", unit:"bps", text:"Typical bid-ask spread for a very liquid large-cap stock (order)."},
+  {id:"Q05", region:"Quant", unit:"bps", text:"Typical management fee for a passive index fund (order)."},
+  {id:"Q06", region:"Quant", unit:"%", text:"Annual volatility of a broad equity index (order)."},
+  {id:"Q07", region:"Quant", unit:"%", text:"Expected annual return of equities over long horizons (rough)."},
+  {id:"Q08", region:"Quant", unit:"%", text:"Probability a daily return exceeds 2 standard deviations (rough)."},
+  {id:"Q09", region:"Quant", unit:"USD", text:"Average daily FX volume for EUR/USD (order)."},
+  {id:"Q10", region:"Quant", unit:"USD", text:"Average daily crypto market volume (order)."},
+];
+
+/* -------------------- STATE -------------------- */
+const STORAGE_KEY = "fermi_game_v1";
+let state = {
+  current: 0,
+  attempts: {} // id -> {best,low,high,conf,actual,ts}
+};
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){
+      const obj = JSON.parse(raw);
+      if(obj && obj.attempts) state = obj;
+    }
+  }catch(e){}
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+/* -------------------- SCORING -------------------- */
+/*
+We treat your stated confidence c as 1 - alpha for the interval [L,U].
+We compute:
+- hit: actual in [L,U]
+- Winkler interval score: width + (2/alpha)*(L-y) if y<L + (2/alpha)*(y-U) if y>U
+Lower is better. We also track empirical coverage vs claimed confidence.
+*/
+function intervalScore(L,U,y,c){
+  const width = U - L;
+  const alpha = Math.max(1e-6, 1 - c);
+  let penalty = 0;
+  if(y < L) penalty = (2/alpha)*(L - y);
+  else if(y > U) penalty = (2/alpha)*(y - U);
+  return width + penalty;
+}
+function clampNum(x){ return (Number.isFinite(x) ? x : null); }
+
+/* -------------------- UI -------------------- */
+const el = (id)=>document.getElementById(id);
+
+function renderQuestion(){
+  const q = QUESTIONS[state.current];
+  el("qIndex").textContent = (state.current+1);
+  el("qTotal").textContent = QUESTIONS.length;
+  el("questionText").textContent = q.text;
+  el("questionMeta").textContent = `ID: ${q.id}  •  Region: ${q.region}  •  Units: ${q.unit}`;
+
+  const a = state.attempts[q.id] || {};
+  el("best").value = (a.best ?? "");
+  el("low").value = (a.low ?? "");
+  el("high").value = (a.high ?? "");
+  el("conf").value = (a.conf != null ? Math.round(a.conf*100) : 80);
+  el("actual").value = (a.actual ?? "");
+  renderConfLabel();
+  renderScoreBox(q.id);
+  renderDash();
+}
+
+function renderConfLabel(){
+  el("confLabel").textContent = el("conf").value;
+}
+
+function parseInputs(){
+  const best = clampNum(parseFloat(el("best").value));
+  const low = clampNum(parseFloat(el("low").value));
+  const high = clampNum(parseFloat(el("high").value));
+  const conf = clampNum(parseFloat(el("conf").value)/100);
+  const actual = clampNum(parseFloat(el("actual").value));
+
+  return {best,low,high,conf,actual};
+}
+
+function validateAttempt(a){
+  const errs = [];
+  if(a.best == null) errs.push("Best estimate missing.");
+  if(a.low == null || a.high == null) errs.push("Low/High range missing.");
+  if(a.low != null && a.high != null && a.low >= a.high) errs.push("Low must be < High.");
+  if(a.conf == null || a.conf < 0.5 || a.conf > 0.99) errs.push("Confidence must be 50–99%.");
+  return errs;
+}
+
+function renderScoreBox(qid){
+  const a = state.attempts[qid];
+  if(!a){
+    el("scoreBox").innerHTML = `No saved attempt for this question yet.`;
+    return;
+  }
+  const {low,high,conf,actual} = a;
+  const c = conf;
+  const hasActual = (actual != null);
+  const rangeTxt = `<span class="mono">[${low}, ${high}]</span> @ <span class="mono">${Math.round(c*100)}%</span>`;
+  if(!hasActual){
+    el("scoreBox").innerHTML = `Saved. Your interval is ${rangeTxt}. Add an actual value later to score calibration.`;
+    return;
+  }
+  const hit = (actual >= low && actual <= high);
+  const s = intervalScore(low,high,actual,c);
+  const hitTxt = hit ? `<span class="good">HIT</span>` : `<span class="bad">MISS</span>`;
+  el("scoreBox").innerHTML = `
+    Interval ${rangeTxt} • Actual <span class="mono">${actual}</span> → ${hitTxt}<br/>
+    Interval score (lower better): <span class="mono">${s.toFixed(4)}</span>
+  `;
+}
+
+function renderDash(){
+  // Compute metrics over attempts with actuals
+  const attempts = Object.values(state.attempts);
+  const withActual = attempts.filter(a => a.actual != null && a.low != null && a.high != null && a.conf != null);
+  const n = withActual.length;
+
+  // Coverage vs confidence buckets
+  const buckets = [
+    {name:"50–59%", lo:0.50, hi:0.60, n:0, hit:0},
+    {name:"60–69%", lo:0.60, hi:0.70, n:0, hit:0},
+    {name:"70–79%", lo:0.70, hi:0.80, n:0, hit:0},
+    {name:"80–89%", lo:0.80, hi:0.90, n:0, hit:0},
+    {name:"90–99%", lo:0.90, hi:1.00, n:0, hit:0},
+  ];
+
+  let sumScore = 0, sumWidth = 0, sumConf = 0, sumHit = 0;
+  for(const a of withActual){
+    const hit = (a.actual >= a.low && a.actual <= a.high) ? 1 : 0;
+    const score = intervalScore(a.low,a.high,a.actual,a.conf);
+    sumScore += score;
+    sumWidth += (a.high - a.low);
+    sumConf += a.conf;
+    sumHit += hit;
+
+    const b = buckets.find(b => a.conf >= b.lo && a.conf < b.hi);
+    if(b){ b.n++; b.hit += hit; }
+  }
+
+  const avgScore = (n ? sumScore/n : null);
+  const avgWidth = (n ? sumWidth/n : null);
+  const claimed = (n ? sumConf/n : null);
+  const actualCov = (n ? sumHit/n : null);
+
+  // Advice heuristics
+  let advice = [];
+  if(n >= 10){
+    const gap = actualCov - claimed; // positive => underconfident, negative => overconfident
+    if(gap < -0.07) advice.push("You look **overconfident**: your intervals miss more often than your stated confidence. Widen ranges or lower confidence.");
+    if(gap > 0.07) advice.push("You look **underconfident**: your intervals hit more often than your stated confidence. You can tighten ranges or raise confidence.");
+    if(avgWidth != null){
+      advice.push("Try this rule: make your **80% range** wide enough that it *feels slightly uncomfortable*, but not ridiculous.");
+    }
+  } else {
+    advice.push("Enter actual values for at least ~10 questions to get meaningful calibration feedback.");
+  }
+
+  // Recent list (last 12 by ts)
+  const recent = Object.entries(state.attempts)
+    .map(([id,a])=>({id,...a}))
+    .sort((x,y)=>(y.ts||0)-(x.ts||0))
+    .slice(0,12);
+
+  el("recent").innerHTML = recent.length ? recent.map(r=>{
+    const q = QUESTIONS.find(q=>q.id===r.id);
+    const has = (r.actual!=null);
+    const hit = has ? ((r.actual>=r.low && r.actual<=r.high) ? "HIT" : "MISS") : "—";
+    const cls = hit==="HIT" ? "good" : (hit==="MISS" ? "bad" : "muted");
+    return `<div class="item">
+      <div><span class="mono">${r.id}</span> — ${q ? q.text : ""}</div>
+      <div class="small">range <span class="mono">[${r.low ?? "?"}, ${r.high ?? "?"}]</span> @ <span class="mono">${r.conf!=null?Math.round(r.conf*100):"?"}%</span>
+      • actual <span class="mono">${has?r.actual:"—"}</span> • <span class="${cls}">${hit}</span></div>
+    </div>`;
+  }).join("") : `<div class="item muted">No attempts yet.</div>`;
+
+  // Bucket table text
+  const bucketLines = buckets.map(b=>{
+    if(!b.n) return `${b.name}: —`;
+    const cov = b.hit/b.n;
+    return `${b.name}: coverage ${Math.round(cov*100)}% on n=${b.n}`;
+  }).join("<br/>");
+
+  el("dash").innerHTML = `
+    Attempts with actuals: <span class="mono">${n}</span><br/>
+    Avg claimed confidence: <span class="mono">${claimed!=null?Math.round(claimed*100):"—"}%</span><br/>
+    Empirical coverage: <span class="mono">${actualCov!=null?Math.round(actualCov*100):"—"}%</span><br/>
+    Avg interval width (raw units): <span class="mono">${avgWidth!=null?avgWidth.toFixed(4):"—"}</span><br/>
+    Avg interval score (lower better): <span class="mono">${avgScore!=null?avgScore.toFixed(4):"—"}</span>
+    <div class="hr"></div>
+    <div class="pill">Calibration by confidence bucket</div>
+    <div class="small" style="margin-top:8px;">${bucketLines}</div>
+    <div class="hr"></div>
+    <div class="pill">Advice</div>
+    <div style="margin-top:8px;">${advice.map(x=>`• ${x}`).join("<br/>")}</div>
+  `;
+}
+
+/* -------------------- ACTIONS -------------------- */
+function saveAttempt(){
+  const q = QUESTIONS[state.current];
+  const a = parseInputs();
+  const errs = validateAttempt(a);
+  if(errs.length){
+    el("scoreBox").innerHTML = `<span class="bad">${errs.join(" ")}</span>`;
+    return;
+  }
+  state.attempts[q.id] = {...state.attempts[q.id], ...a, ts:Date.now()};
+  saveState();
+  renderScoreBox(q.id);
+  renderDash();
+}
+
+function clearAttempt(){
+  const q = QUESTIONS[state.current];
+  delete state.attempts[q.id];
+  saveState();
+  renderQuestion();
+}
+
+function next(){
+  state.current = (state.current + 1) % QUESTIONS.length;
+  saveState(); renderQuestion();
+}
+function prev(){
+  state.current = (state.current - 1 + QUESTIONS.length) % QUESTIONS.length;
+  saveState(); renderQuestion();
+}
+function randomQ(){
+  state.current = Math.floor(Math.random()*QUESTIONS.length);
+  saveState(); renderQuestion();
+}
+
+function exportJSON(){
+  const blob = new Blob([JSON.stringify(state,null,2)], {type:"application/json"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "fermi_attempts.json";
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function resetAll(){
+  if(!confirm("Reset ALL saved attempts?")) return;
+  state = {current:0, attempts:{}};
+  saveState();
+  renderQuestion();
+}
+
+/* -------------------- INIT -------------------- */
+loadState();
+el("conf").addEventListener("input", renderConfLabel);
+el("saveBtn").addEventListener("click", saveAttempt);
+el("clearBtn").addEventListener("click", clearAttempt);
+el("revealBtn").addEventListener("click", ()=>renderScoreBox(QUESTIONS[state.current].id));
+el("nextBtn").addEventListener("click", next);
+el("prevBtn").addEventListener("click", prev);
+el("randBtn").addEventListener("click", randomQ);
+el("exportBtn").addEventListener("click", exportJSON);
+el("resetAllBtn").addEventListener("click", resetAll);
+
+// hotkeys
+document.addEventListener("keydown", (e)=>{
+  if(e.key==="ArrowRight") next();
+  else if(e.key==="ArrowLeft") prev();
+  else if(e.key.toLowerCase()==="s") saveAttempt();
+  else if(e.key.toLowerCase()==="r") randomQ();
+});
+
+renderQuestion();
+</script>
+</body>
+</html>
