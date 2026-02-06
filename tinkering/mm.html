@@ -1,0 +1,649 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>3-Card Draw EV Dashboard (Local)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#111b2e;
+      --panel2:#0f182a;
+      --text:#e8eefc;
+      --muted:#a9b7db;
+      --border:#233252;
+      --good:#27d49a;
+      --bad:#ff5b6b;
+      --mid:#ffd166;
+      --btn:#1b2a4a;
+      --btn2:#243863;
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius:16px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--sans);
+      background: radial-gradient(1200px 700px at 20% 0%, #152a55 0%, var(--bg) 55%);
+      color:var(--text);
+    }
+    .wrap{max-width:1200px; margin:0 auto; padding:24px;}
+    h1{margin:0 0 6px 0; font-size:28px;}
+    .sub{color:var(--muted); margin:0 0 18px 0; line-height:1.35;}
+    .grid{display:grid; gap:16px;}
+    .grid2{grid-template-columns: 380px 1fr;}
+    @media (max-width: 980px){ .grid2{grid-template-columns: 1fr;} }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border:1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .card .hd{
+      padding:16px 16px 10px 16px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+      background: rgba(0,0,0,.15);
+    }
+    .card .hd h2{margin:0; font-size:16px; letter-spacing:.2px;}
+    .card .bd{padding:16px;}
+    label{display:block; font-size:12px; color:var(--muted); margin:0 0 6px 0;}
+    select, input{
+      width:100%;
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(0,0,0,.25);
+      color:var(--text);
+      outline:none;
+    }
+    input{font-family:var(--mono);}
+    .row{display:flex; gap:10px; align-items:center;}
+    .row > *{flex:1;}
+    .btnrow{display:flex; gap:10px; margin-top:10px;}
+    button{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: var(--btn);
+      color:var(--text);
+      cursor:pointer;
+    }
+    button:hover{background:var(--btn2);}
+    .small{font-size:12px; color:var(--muted); line-height:1.35;}
+    .pillgrid{
+      display:grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap:12px;
+    }
+    @media (max-width: 980px){ .pillgrid{grid-template-columns: repeat(2, minmax(0,1fr));} }
+    .pill{
+      border:1px solid rgba(255,255,255,.08);
+      border-radius: 16px;
+      padding:12px;
+      background: rgba(0,0,0,.12);
+    }
+    .pill .t{font-size:12px; color:var(--muted);}
+    .pill .v{margin-top:6px; font-size:18px; font-weight:700; font-family:var(--mono);}
+    .verdict{
+      display:flex; justify-content:space-between; gap:12px; align-items:center;
+      border:1px solid rgba(255,255,255,.08);
+      border-radius:16px;
+      padding:14px;
+      background: rgba(0,0,0,.14);
+    }
+    .verdict .big{font-size:24px; font-weight:800; letter-spacing:.5px;}
+    .tag-good{color:var(--good)}
+    .tag-bad{color:var(--bad)}
+    .tag-mid{color:var(--mid)}
+    canvas{
+      width:100%;
+      height:320px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.18);
+      display:block;
+    }
+    .tablewrap{
+      max-height:220px; overflow:auto;
+      border-radius:16px; border:1px solid rgba(255,255,255,.08);
+      background: rgba(0,0,0,.16);
+    }
+    table{width:100%; border-collapse:collapse; font-family:var(--mono); font-size:13px;}
+    thead th{
+      position:sticky; top:0;
+      background: rgba(15,24,42,.95);
+      color:var(--muted);
+      text-align:left;
+      padding:10px;
+      border-bottom:1px solid rgba(255,255,255,.08);
+    }
+    tbody td{
+      padding:10px;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    tbody tr:last-child td{border-bottom:none;}
+    .right{text-align:right;}
+    .err{
+      border:1px solid rgba(255,91,107,.35);
+      background: rgba(255,91,107,.10);
+      color:#ffd9dd;
+      border-radius:16px;
+      padding:12px;
+      font-size:14px;
+    }
+    .footerhint{margin-top:10px; font-size:12px; color:var(--muted);}
+    code{font-family:var(--mono); background:rgba(255,255,255,.08); padding:2px 6px; border-radius:8px;}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>3-Card Draw EV Dashboard (Local)</h1>
+    <p class="sub">
+      Exact EV + distribution for a 3-card draw from a standard deck (ranks 2–14, Ace=14, 4 of each), without replacement.
+      Settlement value = <b>sum of ranks</b>.
+    </p>
+
+    <div class="grid grid2">
+      <!-- Inputs -->
+      <div class="card">
+        <div class="hd"><h2>Inputs</h2></div>
+        <div class="bd">
+          <div class="grid" style="gap:14px;">
+            <div>
+              <label>Card 1</label>
+              <select id="c1"></select>
+            </div>
+            <div>
+              <label>Card 2</label>
+              <select id="c2"></select>
+            </div>
+            <div>
+              <label>Card 3</label>
+              <select id="c3"></select>
+            </div>
+
+            <div class="row">
+              <div>
+                <label>MM Bid</label>
+                <input id="bid" type="text" value="24" inputmode="decimal" />
+              </div>
+              <div>
+                <label>MM Ask</label>
+                <input id="ask" type="text" value="26" inputmode="decimal" />
+              </div>
+            </div>
+
+            <div class="btnrow">
+              <button id="reset">Reset cards</button>
+              <button id="example">Example</button>
+            </div>
+
+            <div class="small">
+              Notes:
+              <ul style="margin:8px 0 0 18px; padding:0; color:var(--muted);">
+                <li>Buy @ ask profit = sum − ask → EV profit = E[sum] − ask</li>
+                <li>Sell @ bid profit = bid − sum → EV profit = bid − E[sum]</li>
+                <li><code>minEdge</code> is set in code (default 0.10) for BUY/SELL verdict.</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Outputs -->
+      <div class="card">
+        <div class="hd"><h2>Distribution, EV, and Verdict</h2></div>
+        <div class="bd">
+          <div id="errorBox" class="err" style="display:none;"></div>
+
+          <div class="pillgrid" id="pillgrid">
+            <div class="pill">
+              <div class="t">Known cards</div>
+              <div class="v" id="knownCards">—</div>
+            </div>
+            <div class="pill">
+              <div class="t">EV(sum)</div>
+              <div class="v" id="evSum">—</div>
+            </div>
+            <div class="pill">
+              <div class="t">EV Profit (Buy @ ask)</div>
+              <div class="v" id="evBuy">—</div>
+            </div>
+            <div class="pill">
+              <div class="t">EV Profit (Sell @ bid)</div>
+              <div class="v" id="evSell">—</div>
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <div class="verdict">
+            <div>
+              <div class="t" style="color:var(--muted); font-size:12px;">Verdict</div>
+              <div class="big" id="verdict">—</div>
+            </div>
+            <div class="small" style="text-align:right;">
+              Buy downside: <b id="pUnderAsk">—</b> (P(sum &lt; ask))<br/>
+              Sell downside: <b id="pAboveBid">—</b> (P(sum &gt; bid))
+            </div>
+          </div>
+
+          <div style="height:12px"></div>
+
+          <canvas id="chart" width="1100" height="360"></canvas>
+          <div class="footerhint">Chart shows P(sum = x). Vertical lines mark bid and ask.</div>
+
+          <div style="height:16px"></div>
+
+          <div class="grid" style="grid-template-columns:1fr 1fr; gap:12px;">
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="font-size:14px;">Mass under ask (buy downside)</h2></div>
+              <div class="bd">
+                <div class="small">P(sum &lt; ask) = <b id="pUnderAsk2">—</b></div>
+                <div style="height:8px"></div>
+                <div class="tablewrap">
+                  <table>
+                    <thead>
+                      <tr><th>Sum</th><th class="right">Prob</th></tr>
+                    </thead>
+                    <tbody id="tblUnderAsk"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <div class="card" style="box-shadow:none;">
+              <div class="hd"><h2 style="font-size:14px;">Mass above bid (sell downside)</h2></div>
+              <div class="bd">
+                <div class="small">P(sum &gt; bid) = <b id="pAboveBid2">—</b></div>
+                <div style="height:8px"></div>
+                <div class="tablewrap">
+                  <table>
+                    <thead>
+                      <tr><th>Sum</th><th class="right">Prob</th></tr>
+                    </thead>
+                    <tbody id="tblAboveBid"></tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="footerhint">Sanity: total probability = <span id="pTotal">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // ========= Core model =========
+  const RANKS = Array.from({length: 13}, (_, i) => i + 2); // 2..14
+  const COUNT_PER_RANK = 4;
+
+  function parseNum(str, fallback=0){
+    const n = Number(str);
+    return Number.isFinite(n) ? n : fallback;
+  }
+
+  function formatPct(p){
+    return (p * 100).toFixed(2) + "%";
+  }
+
+  // nCk for small n,k
+  function comb(n, k){
+    if (k < 0 || k > n) return 0;
+    k = Math.min(k, n - k);
+    let num = 1, den = 1;
+    for (let i = 1; i <= k; i++){
+      num *= (n - (k - i));
+      den *= i;
+    }
+    return num / den;
+  }
+
+  function sumCounts(counts){
+    let s = 0;
+    for (const r of RANKS) s += (counts[r] || 0);
+    return s;
+  }
+
+  // Multivariate hypergeometric enumeration: pick kMissing cards from remaining deck counts
+  function distributionForMissing(remainingCounts, kMissing){
+    const N = sumCounts(remainingCounts);
+    const denom = comb(N, kMissing);
+    const results = []; // {addSum, prob}
+
+    function rec(idx, left, addSum, waysProd){
+      if (left === 0){
+        results.push({ addSum, prob: waysProd / denom });
+        return;
+      }
+      if (idx >= RANKS.length) return;
+
+      const rank = RANKS[idx];
+      const c = remainingCounts[rank] || 0;
+      const maxTake = Math.min(c, left);
+
+      for (let t = 0; t <= maxTake; t++){
+        const w = comb(c, t);
+        rec(idx + 1, left - t, addSum + rank * t, waysProd * w);
+      }
+    }
+
+    rec(0, kMissing, 0, 1);
+    return results;
+  }
+
+  function computeAll(knownRanks, bid, ask){
+    // Build remaining deck
+    const counts = {};
+    for (const r of RANKS) counts[r] = COUNT_PER_RANK;
+
+    let knownSum = 0, knownCount = 0;
+    for (const r of knownRanks){
+      if (r != null){
+        knownSum += r;
+        knownCount += 1;
+        counts[r] = (counts[r] || 0) - 1;
+      }
+    }
+    for (const r of RANKS){
+      if ((counts[r] || 0) < 0){
+        return { error: "Invalid input: you used a rank more than 4 times (standard deck)." };
+      }
+    }
+
+    const kMissing = 3 - knownCount;
+    if (kMissing < 0 || kMissing > 3){
+      return { error: "Need exactly 3 cards total (some can be unknown)." };
+    }
+
+    const missing = distributionForMissing(counts, kMissing);
+
+    // aggregate total-sum distribution
+    const mp = new Map();
+    for (const d of missing){
+      const total = knownSum + d.addSum;
+      mp.set(total, (mp.get(total) || 0) + d.prob);
+    }
+    const dist = Array.from(mp.entries()).map(([total, prob]) => ({ total, prob }))
+                     .sort((a,b) => a.total - b.total);
+
+    const totalProb = dist.reduce((a,d) => a + d.prob, 0);
+    const ev = dist.reduce((a,d) => a + d.total * d.prob, 0);
+
+    const buyEVprofit = ev - ask;
+    const sellEVprofit = bid - ev;
+
+    const underAsk = dist.filter(d => d.total < ask);
+    const aboveBid = dist.filter(d => d.total > bid);
+
+    const pUnderAsk = underAsk.reduce((a,d) => a + d.prob, 0);
+    const pAboveBid = aboveBid.reduce((a,d) => a + d.prob, 0);
+
+    const minEdge = 0.10; // tweak this if you want
+    let verdict = "AVOID";
+    if (buyEVprofit > minEdge && buyEVprofit >= sellEVprofit) verdict = "BUY";
+    else if (sellEVprofit > minEdge) verdict = "SELL";
+
+    return {
+      error: null,
+      knownCount, ev, buyEVprofit, sellEVprofit, verdict,
+      dist, totalProb, underAsk, aboveBid, pUnderAsk, pAboveBid
+    };
+  }
+
+  // ========= UI wiring =========
+  const els = {
+    c1: document.getElementById("c1"),
+    c2: document.getElementById("c2"),
+    c3: document.getElementById("c3"),
+    bid: document.getElementById("bid"),
+    ask: document.getElementById("ask"),
+    reset: document.getElementById("reset"),
+    example: document.getElementById("example"),
+
+    errorBox: document.getElementById("errorBox"),
+    knownCards: document.getElementById("knownCards"),
+    evSum: document.getElementById("evSum"),
+    evBuy: document.getElementById("evBuy"),
+    evSell: document.getElementById("evSell"),
+    verdict: document.getElementById("verdict"),
+    pUnderAsk: document.getElementById("pUnderAsk"),
+    pAboveBid: document.getElementById("pAboveBid"),
+    pUnderAsk2: document.getElementById("pUnderAsk2"),
+    pAboveBid2: document.getElementById("pAboveBid2"),
+    pTotal: document.getElementById("pTotal"),
+    tblUnderAsk: document.getElementById("tblUnderAsk"),
+    tblAboveBid: document.getElementById("tblAboveBid"),
+    chart: document.getElementById("chart")
+  };
+
+  function fillCardSelect(sel){
+    sel.innerHTML = "";
+    const optU = document.createElement("option");
+    optU.value = "";
+    optU.textContent = "Unknown";
+    sel.appendChild(optU);
+
+    for (const r of RANKS){
+      const opt = document.createElement("option");
+      opt.value = String(r);
+      opt.textContent = (r === 14) ? "14 (Ace)" : String(r);
+      sel.appendChild(opt);
+    }
+  }
+
+  fillCardSelect(els.c1);
+  fillCardSelect(els.c2);
+  fillCardSelect(els.c3);
+
+  function getRank(sel){
+    const v = sel.value;
+    if (!v) return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function setRank(sel, rankOrNull){
+    sel.value = (rankOrNull == null) ? "" : String(rankOrNull);
+  }
+
+  function clearTable(tbody){
+    while (tbody.firstChild) tbody.removeChild(tbody.firstChild);
+  }
+
+  function renderTable(tbody, rows){
+    clearTable(tbody);
+    if (!rows.length){
+      const tr = document.createElement("tr");
+      const td = document.createElement("td");
+      td.colSpan = 2;
+      td.style.color = "rgba(232,238,252,.65)";
+      td.textContent = "None";
+      td.style.padding = "10px";
+      tr.appendChild(td);
+      tbody.appendChild(tr);
+      return;
+    }
+    for (const r of rows){
+      const tr = document.createElement("tr");
+      const td1 = document.createElement("td");
+      td1.textContent = String(r.total);
+      const td2 = document.createElement("td");
+      td2.className = "right";
+      td2.textContent = formatPct(r.prob);
+      tr.appendChild(td1);
+      tr.appendChild(td2);
+      tbody.appendChild(tr);
+    }
+  }
+
+  // Simple bar chart with bid/ask vertical lines
+  function drawChart(dist, bid, ask){
+    const canvas = els.chart;
+    const ctx = canvas.getContext("2d");
+    const W = canvas.width, H = canvas.height;
+
+    // clear
+    ctx.clearRect(0,0,W,H);
+
+    // padding
+    const padL = 55, padR = 20, padT = 20, padB = 45;
+    const x0 = padL, y0 = H - padB;
+    const x1 = W - padR, y1 = padT;
+    const plotW = x1 - x0, plotH = y0 - y1;
+
+    // axes
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = "rgba(232,238,252,.35)";
+    ctx.lineWidth = 1;
+    ctx.beginPath();
+    ctx.moveTo(x0, y1);
+    ctx.lineTo(x0, y0);
+    ctx.lineTo(x1, y0);
+    ctx.stroke();
+
+    if (!dist.length) return;
+
+    const minX = dist[0].total;
+    const maxX = dist[dist.length - 1].total;
+    const maxP = Math.max(...dist.map(d => d.prob), 1e-9);
+
+    function xScale(x){
+      if (maxX === minX) return x0 + plotW/2;
+      return x0 + (x - minX) * (plotW / (maxX - minX));
+    }
+    function yScale(p){
+      return y0 - (p / maxP) * plotH;
+    }
+
+    // bars
+    const barW = Math.max(2, Math.floor(plotW / (maxX - minX + 1)) - 1);
+
+    for (const d of dist){
+      const x = xScale(d.total);
+      const y = yScale(d.prob);
+      ctx.fillStyle = "rgba(232,238,252,.75)";
+      ctx.fillRect(Math.round(x - barW/2), Math.round(y), barW, Math.round(y0 - y));
+    }
+
+    // bid/ask lines
+    function vLine(xVal, color){
+      if (xVal == null || !Number.isFinite(xVal)) return;
+      const x = xScale(xVal);
+      ctx.strokeStyle = color;
+      ctx.setLineDash([6,6]);
+      ctx.beginPath();
+      ctx.moveTo(x, y1);
+      ctx.lineTo(x, y0);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+    vLine(bid, "rgba(39,212,154,.8)");
+    vLine(ask, "rgba(255,209,102,.85)");
+
+    // x ticks (sparse)
+    ctx.fillStyle = "rgba(232,238,252,.75)";
+    ctx.font = "12px " + getComputedStyle(document.body).fontFamily;
+    const tickStep = Math.max(1, Math.ceil((maxX - minX) / 12));
+    for (let t = minX; t <= maxX; t += tickStep){
+      const x = xScale(t);
+      ctx.fillText(String(t), x - 8, y0 + 22);
+      ctx.strokeStyle = "rgba(232,238,252,.18)";
+      ctx.beginPath();
+      ctx.moveTo(x, y0);
+      ctx.lineTo(x, y0 + 5);
+      ctx.stroke();
+    }
+
+    // y labels (0%, 50%, 100% of maxP)
+    const yTicks = [0, 0.5, 1];
+    ctx.fillStyle = "rgba(232,238,252,.65)";
+    for (const a of yTicks){
+      const p = a * maxP;
+      const y = yScale(p);
+      ctx.fillText((a*100).toFixed(0) + "%", 12, y + 4);
+      ctx.strokeStyle = "rgba(232,238,252,.08)";
+      ctx.beginPath();
+      ctx.moveTo(x0, y);
+      ctx.lineTo(x1, y);
+      ctx.stroke();
+    }
+  }
+
+  function render(){
+    const bid = parseNum(els.bid.value, 0);
+    const ask = parseNum(els.ask.value, 0);
+    const c1 = getRank(els.c1);
+    const c2 = getRank(els.c2);
+    const c3 = getRank(els.c3);
+
+    const res = computeAll([c1,c2,c3], bid, ask);
+
+    if (res.error){
+      els.errorBox.style.display = "block";
+      els.errorBox.textContent = res.error;
+      els.knownCards.textContent = "—";
+      els.evSum.textContent = "—";
+      els.evBuy.textContent = "—";
+      els.evSell.textContent = "—";
+      els.verdict.textContent = "—";
+      els.pUnderAsk.textContent = "—";
+      els.pAboveBid.textContent = "—";
+      els.pUnderAsk2.textContent = "—";
+      els.pAboveBid2.textContent = "—";
+      els.pTotal.textContent = "—";
+      clearTable(els.tblUnderAsk);
+      clearTable(els.tblAboveBid);
+      drawChart([], bid, ask);
+      return;
+    }
+
+    els.errorBox.style.display = "none";
+
+    els.knownCards.textContent = `${res.knownCount}/3`;
+    els.evSum.textContent = res.ev.toFixed(4);
+    els.evBuy.textContent = res.buyEVprofit.toFixed(4);
+    els.evSell.textContent = res.sellEVprofit.toFixed(4);
+
+    // verdict styling
+    els.verdict.textContent = res.verdict;
+    els.verdict.className = "big " + (
+      res.verdict === "BUY" ? "tag-good" :
+      res.verdict === "SELL" ? "tag-mid" : "tag-bad"
+    );
+
+    els.pUnderAsk.textContent = formatPct(res.pUnderAsk);
+    els.pAboveBid.textContent = formatPct(res.pAboveBid);
+    els.pUnderAsk2.textContent = formatPct(res.pUnderAsk);
+    els.pAboveBid2.textContent = formatPct(res.pAboveBid);
+    els.pTotal.textContent = res.totalProb.toFixed(6);
+
+    renderTable(els.tblUnderAsk, res.underAsk);
+    renderTable(els.tblAboveBid, res.aboveBid);
+
+    drawChart(res.dist, bid, ask);
+  }
+
+  // events
+  [els.c1, els.c2, els.c3, els.bid, els.ask].forEach(el => el.addEventListener("input", render));
+  els.reset.addEventListener("click", () => { setRank(els.c1,null); setRank(els.c2,null); setRank(els.c3,null); render(); });
+  els.example.addEventListener("click", () => {
+    setRank(els.c1, 14);
+    setRank(els.c2, 10);
+    setRank(els.c3, null);
+    els.bid.value = "31";
+    els.ask.value = "33";
+    render();
+  });
+
+  // initial render
+  render();
+</script>
+</body>
+</html>
